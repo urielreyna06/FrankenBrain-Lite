@@ -1,0 +1,38 @@
+# Secrets and credentials — never commit these
+*.env
+!.env.example
+secrets.env
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+!*.crt.example
+.aws/
+.npmrc
+.bashrc
+.profile
+.browserstack.env
+.browserstack/
+zscaler.crt
+
+# Local editor / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Node
+node_modules/
+package-lock.json
+
+# Backups
+*.bak
+*.bak2
+backup-*/
+*.tar.gz
+*.ignore
+
+# Build/runtime
+dist/
+build/
