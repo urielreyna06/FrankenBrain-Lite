@@ -33,6 +33,9 @@ backup-*/
 *.tar.gz
 *.ignore
 
+# SDD/agent workspaces (never commit orchestration scratch)
+.superpowers/
+
 # Build/runtime
 dist/
 build/
