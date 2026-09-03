@@ -11,6 +11,8 @@ SKIP_FILES=(
   ".gitignore"
   "AGENTS.md"
   "CLAUDE.md"
+  "README.md"  # security contract documentation
+  "GEMINI.md"  # security contract documentation
   "skills/cloud-cli-operations/SKILL.md"  # documentation only
   "commands/aws.md"  # documentation only
 )
