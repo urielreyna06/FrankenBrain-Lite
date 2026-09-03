@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="260" viewBox="0 0 1100 260" role="img" aria-label="FrankenBrain Lite — the transplantable brain of a multi-harness AI assistant">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="0.55" stop-color="#101528"/>
+      <stop offset="1" stop-color="#0b0f1a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6d5dff"/>
+      <stop offset="0.5" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#6d5dff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1100" height="260" fill="url(#bg)"/>
+
+  <!-- subtle grid -->
+  <g stroke="#232c47" stroke-width="1" opacity="0.5">
+    <line x1="0" y1="65" x2="1100" y2="65"/>
+    <line x1="0" y1="130" x2="1100" y2="130"/>
+    <line x1="0" y1="195" x2="1100" y2="195"/>
+    <line x1="0" y1="260" x2="1100" y2="260"/>
+    <line x1="183" y1="0" x2="183" y2="260"/>
+    <line x1="366" y1="0" x2="366" y2="260"/>
+    <line x1="733" y1="0" x2="733" y2="260"/>
+    <line x1="917" y1="0" x2="917" y2="260"/>
+  </g>
+
+  <!-- label track -->
+  <rect x="0" y="0" width="1100" height="3" fill="url(#accent)"/>
+  <rect x="0" y="257" width="1100" height="3" fill="url(#accent)"/>
+
+  <!-- stitched neural motif (right) -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M 760 72 C 800 70 802 36 840 40" stroke="#22d3ee" stroke-width="2" opacity="0.9"/>
+    <path d="M 762 190 C 806 194 806 226 848 222" stroke="#6d5dff" stroke-width="2" opacity="0.9"/>
+    <path d="M 872 130 C 962 124 978 178 1050 150" stroke="#a78bfa" stroke-width="2" opacity="0.7"/>
+    <circle cx="760" cy="72" r="6" fill="#0b0f1a" stroke="#22d3ee" stroke-width="2"/>
+    <circle cx="840" cy="40" r="5" fill="#22d3ee"/>
+    <circle cx="762" cy="190" r="6" fill="#0b0f1a" stroke="#6d5dff" stroke-width="2"/>
+    <circle cx="848" cy="222" r="5" fill="#6d5dff"/>
+    <circle cx="872" cy="130" r="5" fill="#a78bfa"/>
+    <circle cx="1050" cy="150" r="5" fill="#a78bfa"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="60" y="126" font-family="'SF Mono','JetBrains Mono',Consolas,Menlo,monospace" font-size="52" font-weight="700" letter-spacing="-1" fill="#f4f6ff">
+    <tspan fill="#f4f6ff">Franken</tspan><tspan fill="url(#bolt)">Brain</tspan><tspan fill="#22d3ee" font-size="30" opacity="0.9"> Lite</tspan>
+  </text>
+
+  <!-- tagline -->
+  <text x="61" y="168" font-family="'Inter',-apple-system,Segoe UI,Roboto,sans-serif" font-size="19" fill="#9aa6c7">
+    The transplantable brain of a multi-harness AI assistant
+  </text>
+
+  <!-- pipeline -->
+  <g font-family="'SF Mono','JetBrains Mono',Consolas,Menlo,monospace" font-size="14" fill="#5b688c">
+    <text x="61" y="208">clone</text>
+    <text x="122" y="208" fill="#22d3ee">→</text>
+    <text x="142" y="208">register</text>
+    <text x="218" y="208" fill="#22d3ee">→</text>
+    <text x="238" y="208">harvest</text>
+    <text x="314" y="208" fill="#22d3ee">→</text>
+    <text x="334" y="208">secure</text>
+    <text x="395" y="208" fill="#33415e">·</text>
+    <text x="412" y="208" fill="#8ea6ff">opencode</text>
+    <text x="494" y="208" fill="#33415e">·</text>
+    <text x="511" y="208" fill="#8ea6ff">claude</text>
+    <text x="575" y="208" fill="#33415e">·</text>
+    <text x="592" y="208" fill="#8ea6ff">gemini</text>
+    <text x="656" y="208" fill="#33415e">·</text>
+    <text x="673" y="208" fill="#8ea6ff">codex</text>
+  </g>
+
+  <!-- tiny bolt accent -->
+  <g>
+    <path d="M 56 88 l 26 -26 l -11 22 l 14 0 l -27 30 l 11 -24 z" fill="url(#bolt)" opacity="0.9"/>
+  </g>
+</svg>
