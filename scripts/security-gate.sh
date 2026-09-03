@@ -6,6 +6,7 @@ cd "$ROOT"
 
 SKIP_FILES=(
   "scripts/security-gate.sh"
+  "test/test-security-gate.sh"
   "test/fixtures/secret-file.txt"
   ".gitignore"
   "AGENTS.md"
@@ -36,7 +37,6 @@ check() {
   local out
   out="$(grep -rInE -- "$regex" . 2>/dev/null \
     | grep -v '^\./\.git/' \
-    | grep -v '^\./test/fixtures/secret-file.txt' \
     || true )"
   while IFS= read -r line; do
     [[ -z "$line" ]] && continue
@@ -49,8 +49,8 @@ check() {
 
 check "aws-access-key"       'AKIA[0-9A-Z]{16}'
 check "private-key-block"    '-----BEGIN [A-Z ]*PRIVATE KEY-----'
-check "browserstack-key"     'BROWSERSTACK_ACCESS_KEY\s*=\s*[^$\n]'
-check "secret-env-assignment" 'AWS_SECRET_ACCESS_KEY\s*=\s*[^$\n]'
+check "browserstack-key"     'BROWSERSTACK_ACCESS_KEY\s*=\s*[^$]'
+check "secret-env-assignment" 'AWS_SECRET_ACCESS_KEY\s*=\s*[^$]'
 check "password-assignment"  '(password|passwd)\s*[=:]\s*["'\'' ]*[^ "#'\''$\n]{8,}'
 check "api-key-assignment"   '(api[_-]?key|apikey)\s*[=:]\s*["'\'' ]*[^ "#'\''$\n]{8,}'
 check "machine-secret-path"  '(~?/\.browserstack|\.browserstack\.env|/\.aws/|\.npmrc|secrets\.env)'

@@ -32,6 +32,34 @@ else
   failures=$((failures + 1))
 fi
 
+if grep -nE -- '-----BEGIN [A-Z ]*PRIVATE KEY-----' "$SECRET"; then
+  echo "PASS: private-key-block pattern matched"
+else
+  echo "FAIL: private-key-block pattern did NOT match"
+  failures=$((failures + 1))
+fi
+
+if grep -nE 'AWS_SECRET_ACCESS_KEY\s*=\s*[^$]' "$SECRET"; then
+  echo "PASS: secret-env-assignment pattern matched"
+else
+  echo "FAIL: secret-env-assignment pattern did NOT match"
+  failures=$((failures + 1))
+fi
+
+if grep -nE '(api[_-]?key|apikey)\s*[=:]\s*["'\'' ]*[^ "#'\''$\n]{8,}' "$SECRET"; then
+  echo "PASS: api-key-assignment pattern matched"
+else
+  echo "FAIL: api-key-assignment pattern did NOT match"
+  failures=$((failures + 1))
+fi
+
+if grep -nE '(~?/\.browserstack|\.browserstack\.env|/\.aws/|\.npmrc|secrets\.env)' "$SECRET"; then
+  echo "PASS: machine-secret-path pattern matched"
+else
+  echo "FAIL: machine-secret-path pattern did NOT match"
+  failures=$((failures + 1))
+fi
+
 echo ""
 echo "--- Test: clean-file.md does NOT match any patterns ---"
 
