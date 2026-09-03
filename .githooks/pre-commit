@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+echo "Running security gate..."
+bash scripts/security-gate.sh
+
+echo "Running validate..."
+bash scripts/validate.sh
+
+echo "Pre-commit checks passed."
