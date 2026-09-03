@@ -11,6 +11,8 @@ SKIP_FILES=(
   ".gitignore"
   "AGENTS.md"
   "CLAUDE.md"
+  "skills/cloud-cli-operations/SKILL.md"  # documentation only
+  "commands/aws.md"  # documentation only
 )
 
 SKIP_DIRS=(
