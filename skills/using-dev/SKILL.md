@@ -1,6 +1,6 @@
 ---
 name: using-dev
-description: Always active this session — silently triage every task against the installed ECC baseline (skills, agents, commands, rules) plus superpowers, and route to whichever fits before acting. The human partner should never need to name a specific skill/agent/command.
+description: Always active this session — silently triage every task against Superpowers, ECC skills/agents/commands, and graphify, then invoke whichever fits BEFORE acting. The human partner must never need to name a skill, agent, command, or slash shortcut.
 ---
 
 # using-dev
@@ -14,7 +14,24 @@ Process skills set the approach (brainstorming before building, systematic-debug
 
 ## The rule
 
-Before responding to any non-trivial task, silently triage it against the pools below and route to the best fit. Do this whether or not the task looks like it needs it — the cost of checking is one line, the cost of skipping it is reinventing something that already exists.
+Before responding to any non-trivial task, silently triage it against the pools below and **invoke** the match. The human will not type `/graphify`, `/plan`, `/learn`, or “use skill X” — you do that. Skipping because they did not name the tool is a failure of this skill.
+
+### Default routing (no asking)
+
+| Situation | Invoke |
+|---|---|
+| New feature, product change, ambiguous build | Superpowers `brainstorming` (approval gate still applies) |
+| Multi-step implementation with a spec | `writing-plans` then `subagent-driven-development` / `executing-plans` |
+| Any feature/bugfix implementation | `test-driven-development` |
+| Bug, test failure, unexpected behavior | `systematic-debugging` |
+| About to claim done/fixed/passing | `verification-before-completion` |
+| Codebase architecture / “where is X” / file relationships | `graphify` when `graphify-out/graph.json` exists (query/path/explain first). If the repo has code and no graph, `graphify extract . --code-only` once. |
+| Auth, secrets, user input, APIs | `security-review` + `security-reviewer` agent |
+| Need an existing library/pattern | `search-first` |
+| Java | `java-reviewer` / `java-build-resolver` |
+| Cross-session context | `unified-memory` |
+| After failure of an agent run | `agent-introspection-debugging` |
+| After non-trivial or corrected work | `growth-log` / vault note — do not wait for `/learn` |
 
 ## Step 1 — the inventory is not static, re-check live
 
@@ -29,7 +46,7 @@ Do not trust a memorized list from an earlier session or an earlier point in thi
 
 ## Step 2 — triage
 
-**Skills** (`~/.config/opencode/skills/*/SKILL.md`) — read the `description:` before invoking. ECC additions: `search-first`, `security-review`, `intent-driven-development`, `error-handling`, `growth-log`, `knowledge-ops`, `skill-scout`, `rules-distill`, `agent-introspection-debugging`, `context-budget`, `continuous-learning-v2`, `unified-memory`. If a skill might apply, use it — don't rationalize past it, same bar as `using-superpowers`.
+**Skills** (`~/.config/opencode/skills/*/SKILL.md`) — read the `description:` before invoking. ECC additions: `search-first`, `security-review`, `intent-driven-development`, `error-handling`, `growth-log`, `knowledge-ops`, `skill-scout`, `rules-distill`, `agent-introspection-debugging`, `context-budget`, `continuous-learning-v2`, `unified-memory`, **`graphify`**. If a skill might apply, use it — don't rationalize past it, same bar as `using-superpowers`.
 
 **Agents** (`~/.config/opencode/agent/*.md`) — the roster was pruned to nine: `java-reviewer` and `java-build-resolver` (the only language pair kept), `security-reviewer` for anything touching auth/input/secrets, `code-reviewer`, `architect` for design questions, plus `docs-lookup`, `doc-updater`, `harness-optimizer`, `loop-operator`. Delegate when one of these matches; otherwise work inline.
 
