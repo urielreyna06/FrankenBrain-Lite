@@ -5,7 +5,7 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0b0f1a?style=flat-square&color=6d5dff" alt="MIT"></a>
   <a href="https://github.com/urielreyna06/FrankenBrain-Lite/actions"><img src="https://img.shields.io/github/actions/workflow/status/urielreyna06/FrankenBrain-Lite/validate.yml?branch=master&style=flat-square" alt="CI"></a>
-  <img src="https://img.shields.io/badge/skills-21-0b0f1a?style=flat-square&color=22d3ee" alt="21 skills">
+  <img src="https://img.shields.io/badge/skills-31-0b0f1a?style=flat-square&color=22d3ee" alt="31 skills">
   <img src="https://img.shields.io/badge/agents-26-0b0f1a?style=flat-square&color=a78bfa" alt="26 agents">
   <img src="https://img.shields.io/badge/security-hard%20gate-0b0f1a?style=flat-square&color=ef4444" alt="Security gate">
   <img src="https://img.shields.io/badge/zero%20credentials-true-0b0f1a?style=flat-square&color=22c55e" alt="Zero credentials">
@@ -33,7 +33,7 @@ clone → register → harvest → secure
 
 | Component | Count | Notes |
 |-----------|:-----:|-------|
-| [`skills/`](skills) | 21 | Procedural workflow skills — each `<name>/SKILL.md` |
+| [`skills/`](skills) | 31 | Procedural workflow skills — each `<name>/SKILL.md` |
 | [`agents/`](agents) | 26 | Specialists for review, build repair, security, architecture |
 | [`commands/`](commands) | 24 | Quick triggers: `plan`, `code-review`, `build-fix`, `save-session`… |
 | [`rules/`](rules) | 9 | Always-loaded standards: `common/` + a full `java/` stack |
@@ -44,13 +44,13 @@ clone → register → harvest → secure
 
 | Family | Skills |
 |--------|--------|
-| Build right | `systematic-debugging` · `ai-regression-testing` · `error-handling` |
-| Stay honest | `verification-before-completion` · `delivery-gate` · `search-first` |
-| Think first | `brainstorming` · `writing-plans` · `intent-driven-development` |
+| Build right | `agent-introspection-debugging` · `error-handling` · `ai-regression-testing` · `architecture-decision-records` · `delivery-gate` · `codebase-onboarding` |
+| Stay honest | `verification-before-completion` · `search-first` · `research-ops` · `token-budget-advisor` |
+| Think first | `blueprint` · `intent-driven-development` |
 | Stay safe | `security-review` · `safety-guard` · `cloud-cli-operations` |
-| Remember | `continuous-learning-v2` · `growth-log` · `knowledge-ops` · `unified-memory` |
-| Run at scale | `continuous-agent-loop` · `eval-harness` · `cost-aware-llm-pipeline` · `context-budget` |
-| Curate | `config-gc` · `rules-distill` · `skill-scout` |
+| Remember | `continuous-learning-v2` · `growth-log` · `knowledge-ops` · `unified-memory` · `recursive-decision-ledger` |
+| Run at scale | `continuous-agent-loop` · `eval-harness` · `cost-aware-llm-pipeline` · `context-budget` · `parallel-execution-optimizer` · `benchmark-optimization-loop` |
+| Curate | `config-gc` · `rules-distill` · `skill-scout` · `agent-self-evaluation` |
 
 **Agents, by role**
 

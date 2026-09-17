@@ -282,7 +282,10 @@ Other behavior (observation capture, instinct thresholds, project scoping, promo
 
 The Claude Code background observer requires WSL2, Linux, or macOS, and does
 not run on OpenCode (instinct analysis is model-driven there, as described
-above).
+above). On native Windows (Git Bash / MSYS2) it starts and reports success,
+but the process is killed when the spawning hook exits and its Job Object
+closes, so no analysis ever runs — setting `observer.enabled: true` there is
+effectively a no-op (see ECC issue #2489).
 
 ## File Structure
 
