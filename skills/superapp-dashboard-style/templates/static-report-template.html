@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>{{TITULO_COMO_INSIGHT}}</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a31;--text:#f6f8ff;--muted:#a8b2ca;--line:#2a3554;
+  --good:#55d69a;--warn:#f3c65f;--bad:#ff747c;--blue:#69a8ff}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:1450px;margin:auto;padding:28px}
+.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+h1{font-size:34px;margin:6px 0 8px}
+.sub{color:var(--muted);line-height:1.5;max-width:970px}
+.eyebrow{color:#ff9e89;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}
+.nav a,.lang a{color:#dbe3f4;text-decoration:none;border:1px solid #384464;border-radius:999px;padding:8px 12px;font-size:12px}
+.nav a.active,.lang a.active{background:var(--text);color:var(--bg);font-weight:800}
+.lang{display:flex;gap:6px;white-space:nowrap}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--panel);border:1px solid #273252;border-radius:16px;padding:17px;margin-bottom:14px}
+.klabel{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}
+.kpi{font-size:30px;font-weight:850;margin:7px 0}
+.note{font-size:12px;color:var(--muted);line-height:1.45}
+.section{margin-top:18px}
+.st{font-size:18px;font-weight:800;margin-bottom:10px}
+.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:9px 8px;border-bottom:1px solid #273252;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.scroll{overflow:auto}
+.cell{border-radius:7px;padding:6px 4px;text-align:center;font-weight:800}
+.healthy{background:rgba(85,214,154,.14);color:#7ee7b5}
+.watch{background:rgba(243,198,95,.14);color:#f7d880}
+.critical{background:rgba(255,116,124,.14);color:#ff9ca2}
+.na{background:rgba(168,178,202,.06);color:#667089}
+.finding{border-left:3px solid var(--blue);padding:5px 0 5px 12px;margin:12px 0}
+.finding b{display:block;margin-bottom:5px}
+.chart svg{width:100%;height:auto;display:block}
+.footer{color:#78849f;font-size:11px;line-height:1.5;margin:22px 0}
+@media(max-width:900px){.grid4,.grid2{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.wrap{padding:16px}.grid4,.grid2{grid-template-columns:1fr}.top{display:block}.lang{margin-top:12px}h1{font-size:27px}}
+</style>
+</head><body><div class="wrap">
+
+<!-- Header: el título ES el insight (ver superapp-dashboard-storytelling), no una etiqueta neutra -->
+<div class="top">
+  <div>
+    <div class="eyebrow">{{EYEBROW — p.ej. "Super App Panama · App Operations"}}</div>
+    <h1>{{TITULO_COMO_INSIGHT — p.ej. "Operate on customer impact, not event volume alone."}}</h1>
+    <div class="sub">{{DESCRIPCION_UNA_LINEA}}</div>
+  </div>
+  <div class="lang"><a class="active" href="{{pagina}}_es.html">ES</a><a href="{{pagina}}_en.html">EN</a></div>
+</div>
+
+<!-- Nav entre páginas hermanas del mismo paquete (multi-page, sin JS) -->
+<div class="nav">
+  <a class="active" href="overview_es.html">Resumen</a>
+  <a href="detalle1_es.html">{{Sección 2}}</a>
+  <a href="detalle2_es.html">{{Sección 3}}</a>
+</div>
+
+<!-- KPIs headline: máx 4, orden universo -> oportunidad capturada -> oportunidad restante -->
+<div class="grid4">
+  <div class="card"><div class="klabel">{{KPI 1 label}}</div><div class="kpi">{{valor}}</div><div class="note">{{contexto/base de comparación}}</div></div>
+  <div class="card"><div class="klabel">{{KPI 2 label}}</div><div class="kpi">{{valor}}</div><div class="note">{{contexto}}</div></div>
+  <div class="card"><div class="klabel">{{KPI 3 label}}</div><div class="kpi good">{{valor}}</div><div class="note">{{contexto}}</div></div>
+  <div class="card"><div class="klabel">{{KPI 4 label}}</div><div class="kpi bad">{{valor}}</div><div class="note">{{contexto}}</div></div>
+</div>
+
+<div class="grid2 section">
+  <div class="card">
+    <div class="st">{{Título del gráfico}}</div>
+    <!-- Gráfico de línea/tendencia: SVG estático generado server-side (polyline + <title> por punto
+         para tooltip nativo sin JS). Ver referencia visual en
+         BotReports/SuperApp_Operations_Dashboard/overview_en.html para el patrón exacto. -->
+    <div class="chart"><svg viewbox="0 0 860 290"><!-- ejes + polyline + circles con <title> --></svg></div>
+  </div>
+  <div class="card">
+    <div class="st">{{Qué importa operativamente}}</div>
+    <!-- Findings: siempre negrita + 1 frase de contexto, nunca solo la cifra -->
+    <div class="finding"><b>{{Insight 1 en negrita}}</b><div class="note">{{una frase de contexto/comparación}}</div></div>
+    <div class="finding"><b>{{Insight 2 en negrita}}</b><div class="note">{{una frase de contexto/comparación}}</div></div>
+  </div>
+</div>
+
+<!-- Matriz opcional: heatmap de estado (healthy/watch/critical) para journeys x mes u otra dimensión cruzada -->
+<div class="card section scroll">
+  <div class="st">{{Título de la matriz}}</div>
+  <table class="matrix">
+    <tr><th>{{Dimensión fila}}</th><th>{{Mes 1}}</th><th>{{Mes 2}}</th></tr>
+    <tr><td>{{fila}}</td><td><div class="cell healthy">{{valor}}</div></td><td><div class="cell watch">{{valor}}</div></td></tr>
+  </table>
+</div>
+
+<!-- Footer: fuente + fecha de corte + si es parcial + cómo se distribuye (sin JS/internet) -->
+<div class="footer">{{Fuente de datos}}. Corte al {{fecha}}. {{Nota de período parcial si aplica}}. Este paquete es estático y puede abrirse localmente sin conexión ni JavaScript.</div>
+</div></body></html>

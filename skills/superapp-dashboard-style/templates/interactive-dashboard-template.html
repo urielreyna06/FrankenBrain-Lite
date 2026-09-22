@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITULO}}</title>
+<!--
+  ============================================================================
+  {{TITULO}} — {{SUBTITULO}}
+  Autor: {{AUTOR}} — {{ROL}}.
+  ============================================================================
+-->
+<meta name="author" content="{{AUTOR}} — {{ROL}}">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* Opcional: @font-face 'Nohemi' aquí si tienes los archivos (ver reference/palette-and-fonts.md) */
+:root{
+  --mamey:#FF4713; --coral:#FB3897; --azul:#36E1FF; --verde:#81DD44; --amarillo:#FFF642;
+  --danger:#EF4444;
+  --bg:#0E0F13; --surface:#171922; --surface2:#1F2230; --line:#2A2E3D;
+  --txt:#F4F5F8; --txt2:#A9AFC2; --txt3:#6F7690;
+  --radius:18px; --pad:22px;
+}
+[data-theme="light"]{
+  --bg:#F5F6FA; --surface:#FFFFFF; --surface2:#F0F2F8; --line:#E2E6F0;
+  --txt:#14161F; --txt2:#4A5169; --txt3:#8A91A8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:'Inter',Arial,Helvetica,sans-serif;
+  -webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+body{padding:clamp(14px,3vw,34px);line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3,.display{font-family:'Nohemi','Inter',Arial,sans-serif;font-weight:800;letter-spacing:-.02em}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--mamey),var(--coral));
+  display:grid;place-items:center;color:#fff;font-family:'Nohemi',sans-serif;font-weight:800;font-size:26px;flex:0 0 auto}
+.brand h1{font-size:clamp(19px,2.4vw,26px);line-height:1.1}
+.brand p{color:var(--txt2);font-size:13px;margin-top:2px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toggle{display:inline-flex;background:var(--surface2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
+.toggle button{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--txt2);background:none;border:none;
+  padding:7px 12px;border-radius:8px;cursor:pointer;transition:.18s;white-space:nowrap;min-height:34px}
+.toggle button.on{background:var(--mamey);color:#fff}
+.toggle button:not(.on):hover{color:var(--txt)}
+.icon-btn{font-size:15px;padding:7px 11px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--pad);
+  position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s,border-color .25s;cursor:default}
+.kpi::after{content:"";position:absolute;inset:0;border-radius:var(--radius);pointer-events:none;
+  background:radial-gradient(400px circle at var(--mx,50%) var(--my,0%),rgba(255,71,19,.10),transparent 60%);
+  opacity:0;transition:opacity .3s}
+.kpi:hover{transform:translateY(-5px);border-color:rgba(255,71,19,.45);box-shadow:0 14px 34px rgba(0,0,0,.28)}
+.kpi:hover::after{opacity:1}
+.kpi:hover .val{color:var(--mamey)}
+.kpi .val{transition:color .25s}
+.kpi .lbl{color:var(--txt2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;margin-bottom:9px}
+.kpi .val{font-family:'Nohemi',sans-serif;font-weight:800;font-size:clamp(24px,3.2vw,33px);line-height:1;letter-spacing:-.02em}
+.kpi .val.money{color:var(--mamey)}
+.kpi .sub{color:var(--txt3);font-size:12px;margin-top:8px}
+
+.grid{display:grid;grid-template-columns:1.55fr 1fr;gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--pad)}
+.card h2{font-size:16px;margin-bottom:3px}
+.card .desc{color:var(--txt2);font-size:12.5px;margin-bottom:18px}
+
+.legend{display:flex;flex-direction:column;gap:2px}
+.leg-row{display:flex;align-items:center;gap:11px;padding:9px 6px;border-radius:9px;transition:.15s;cursor:default}
+.leg-row:hover{background:var(--surface2)}
+.leg-sw{width:13px;height:13px;border-radius:4px;flex:0 0 auto}
+.leg-name{font-size:13px;font-weight:600;flex:1}
+.leg-name small{display:block;color:var(--txt3);font-weight:400;font-size:11px}
+.leg-val{font-family:'Nohemi',sans-serif;font-weight:700;font-size:14px}
+.leg-pct{color:var(--txt3);font-size:11.5px;width:54px;text-align:right;flex:0 0 auto}
+
+.insight{background:linear-gradient(135deg,rgba(255,71,19,.12),rgba(251,56,151,.08));
+  border:1px solid rgba(255,71,19,.28);border-radius:var(--radius);padding:18px 22px;margin-top:18px;font-size:14px}
+.insight b{color:var(--mamey)}
+.foot{color:var(--txt3);font-size:11.5px;margin-top:22px;line-height:1.7;text-align:center}
+.tip{position:fixed;pointer-events:none;background:var(--surface2);border:1px solid var(--line);
+  border-radius:9px;padding:8px 11px;font-size:12px;opacity:0;transition:opacity .12s;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.tip .tk{color:var(--txt2)}.tip .tv{font-family:'Nohemi',sans-serif;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body data-theme="dark">
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">+</div>
+      <div>
+        <h1 data-i18n="title">{{TITULO}}</h1>
+        <p data-i18n="subtitle">{{SUBTITULO}}</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="toggle" id="langToggle">
+        <button data-lang="es" class="on">ES</button>
+        <button data-lang="en">EN</button>
+      </div>
+      <div class="toggle"><button class="icon-btn" id="themeBtn" aria-label="theme">🌙</button></div>
+    </div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid">
+    <div class="card">
+      <h2 data-i18n="chart_title">{{CHART_TITLE}}</h2>
+      <p class="desc" id="chartDesc"></p>
+      <div id="chart"><!-- construir aquí barras/segmentos/funnel a mano, sin librerías --></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="break_title">{{BREAKDOWN_TITLE}}</h2>
+      <div class="legend" id="legend"></div>
+    </div>
+  </div>
+
+  <div class="insight" id="insight"></div>
+  <p class="foot" id="foot"></p>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+// 1) Diccionario bilingüe — TODO texto visible pasa por aquí, nunca hardcodeado
+const I18N = {
+  es:{ title:"{{TITULO}}", subtitle:"{{SUBTITULO}}", chart_title:"{{CHART_TITLE}}",
+       break_title:"{{BREAKDOWN_TITLE}}", foot:"" },
+  en:{ title:"{{TITULO_EN}}", subtitle:"{{SUBTITULO_EN}}", chart_title:"{{CHART_TITLE_EN}}",
+       break_title:"{{BREAKDOWN_TITLE_EN}}", foot:"" }
+};
+
+let DATA=null, lang="es";
+function fmt(n){return (n||0).toLocaleString(lang==="es"?"es-PA":"en-US")}
+function money(n){return "$"+(n||0).toLocaleString(lang==="es"?"es-PA":"en-US",{maximumFractionDigits:0})}
+function t(){return I18N[lang]}
+
+// 2) render(): repinta KPIs/chart/legend/insight a partir de DATA + estado de toggles.
+//    Usa data-target + animateNumbers() para el conteo animado (easeOutCubic).
+function render(animate=false){
+  const T=t();
+  document.getElementById("kpis").innerHTML = [
+    // `<div class="kpi"><div class="lbl">${T.kpi_x}</div><div class="val num" data-target="${d.x}">${fmt(d.x)}</div><div class="sub">${T.kpi_x_sub}</div></div>`,
+  ].join("");
+  bindKpiHover();
+  if(animate) animateNumbers();
+}
+
+const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+function animateNumbers(){
+  document.querySelectorAll("[data-target]").forEach(el=>{
+    const target=+el.dataset.target, isMoney=el.dataset.money==="1";
+    if(REDUCED){ el.textContent=isMoney?money(target):fmt(target); return; }
+    const dur=900, t0=performance.now();
+    (function step(now){
+      const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
+      el.textContent=isMoney?money(Math.round(target*e)):fmt(Math.round(target*e));
+      if(p<1) requestAnimationFrame(step);
+    })(t0);
+  });
+}
+function bindKpiHover(){
+  document.querySelectorAll(".kpi").forEach(k=>{
+    k.addEventListener("mousemove",e=>{
+      const r=k.getBoundingClientRect();
+      k.style.setProperty("--mx",(e.clientX-r.left)+"px");
+      k.style.setProperty("--my",(e.clientY-r.top)+"px");
+    });
+  });
+}
+function applyI18nStatic(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n; if(t()[k])el.textContent=t()[k];});
+  document.documentElement.lang=lang;
+}
+function boot(){
+  document.querySelectorAll("#langToggle button").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll("#langToggle button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); lang=b.dataset.lang; applyI18nStatic(); render();
+  });
+  document.getElementById("themeBtn").onclick=()=>{
+    const isLight=document.body.dataset.theme==="light";
+    document.body.dataset.theme=isLight?"dark":"light";
+    document.getElementById("themeBtn").textContent=isLight?"🌙":"☀️";
+  };
+  applyI18nStatic(); render(true);
+}
+// 3) Carga de datos: fetch al JSON externo; si falla (file:// sin servidor), usa INLINE_DATA.
+fetch("{{DATA_FILE}}.json").then(r=>r.json()).then(j=>{DATA=j;boot();})
+  .catch(()=>{DATA=window.INLINE_DATA;boot();});
+</script>
+<script>
+/* INLINE_DATA fallback para apertura directa por doble-clic (file://) */
+window.INLINE_DATA = { /* mismo JSON que {{DATA_FILE}}.json, pégalo aquí para portabilidad */ };
+</script>
+</body>
+</html>
