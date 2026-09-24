@@ -305,9 +305,113 @@ el CÓMO visual, este skill para el QUÉ/POR QUÉ):
 - [ ] Atribución correcta (autor real, no el de los archivos de referencia).
 - [ ] Bilingüe si es para distribución amplia en CWP/Panamá.
 - [ ] Revisado contra `superapp-dashboard-style` para paleta/tipografía/tema dark-light.
+- [ ] Validación en 3 capas completada (§15): consistencia interna, reglas oficiales del MCP, reconciliación contra QuickSight.
+- [ ] Cada cifra escrita en títulos/insights/alertas trazada a `metrics.json` o a un CSV fuente (chequeo por script, no a ojo).
+- [ ] Toda comparación en un texto usa la misma ventana y una base donde las fuentes cuadran con el KPI oficial.
 
 **Información insuficiente / hipótesis marcadas [inferido]:** no tuve acceso al dashboard vivo de
 QuickSight (requiere SSO de AWS), así que todo lo anterior viene exclusivamente de los artefactos
 HTML/MD estáticos entregados como "panel puente" — si QuickSight introdujo convenciones adicionales
 (alertas, drill-down, RLS) no están capturadas aquí y deberían auditarse por separado cuando haya
 acceso.
+
+## 15. Validación antes de publicar cifras (lecciones de First Time Buyers, sep-2026)
+
+Un análisis que se reproduce a sí mismo 100 veces puede seguir mal definido: **reproducibilidad no es
+validez**. En el caso FTB, 11 inconsistencias pasaron un QA que sólo comparaba el análisis consigo mismo
+(Python vs su propio SQL + capturas de pantalla).
+
+**Las 3 capas, en este orden:**
+
+1. **Consistencia interna:** recálculo con código independiente desde el CSV crudo; recuento con otra
+   lógica SQL (`ROW_NUMBER` vs `MIN_BY`); traza de 5 registros al azar hasta la tabla.
+2. **Reglas oficiales:** leer `superapp_business_rules` (MCP `superapp-context`) ANTES de interpretar una
+   métrica — si una definición propia contradice una regla, la definición está mal.
+3. **Reconciliación contra QuickSight:** primero el vault — `~/vault/notes/2026-09-22-query-cheatlist-athena-quicksight-superapp.md`
+   (queries validadas dígito a dígito vs el valor renderizado) y `~/vault/notes/2026-09-22-lineage-*-mas-app.md`
+   (linaje de las 9 pestañas de "Mas App"). Si no hay entrada: `describe-dashboard-definition` → leer
+   **todos** los FilterGroups (hay filtros ocultos sin control visible) → `describe-data-set` → replicar en
+   Athena. `start-dashboard-snapshot-job` está denegado en la cuenta (`IdentityStore not found`).
+
+**Trampas oficiales que ya costaron cifras:**
+
+| Trampa | Regla |
+|---|---|
+| `INITIATED` contado como fallo | No es fallo. Fallo real = `FAILURE`/`Failed`/`Reversada` (vocabulario por pasarela). Reportar por separado "fallo real" vs "intento sin cerrar". |
+| `created_at` vs `date_ymd` | UTC vs hora Panamá: ~22% de las transacciones cambian de día si se mezclan. |
+| Ingesta duplicada oct–dic 2025 (hasta 24.9×) | Declararla explícitamente en cualquier resultado que toque esa ventana. |
+| "Alta nueva" ≠ usuario nuevo | Los migrados aparecen como alta. En la presentación usar **"registro"** (antes "alta"; en telco "alta" se lee como activación de línea). |
+| Métrica sin equivalente en QuickSight (p. ej. FTB) | Decirlo explícitamente y mostrar la sensibilidad por definición. Collection Breakdown excluye `PAY_A_BILL` y `BALANCE` y usa `transaction_amount` (sin ITBMS 7%). |
+
+**Errores de cálculo que parecen correctos:**
+
+- **Último día casi vacío tratado como "parcial":** medir `MAX(created_at)` y filas de la última partición;
+  si trae unas horas, cortar en el último día completo (distorsionaba FTB/día 927 vs 970 real).
+- **Promedio de promedios en categorías de calendario** (día del mes, día de semana): cada categoría
+  aparece un número distinto de veces → ponderar por fecha (+34% → +37%).
+- **Comparar tasas de ventanas distintas** (pago a 30 días vs conversión por mes calendario): buscar la
+  base con la misma ventana.
+- **Base histórica donde la fuente no cuadra con el KPI oficial** (registros mar–abr +14–17% vs "New Sign Up"):
+  restringir la base al periodo donde cuadran.
+- **Redondeos generosos en el texto** ("4×" cuando es 3.7×; "3.8×" sin base declarada): escribir el
+  cálculo o la base junto a la cifra.
+- **Consulta sin fecha as-of en todas sus fuentes:** acotar la ventana de estudio no basta; si las compras
+  posteriores no tienen tope, la misma SQL da otro número cada día (FTB sep 20,402 → 20,887). Poner
+  `date_ymd ≤ '<corte>'` en cada CTE y un assert de conciliación (Σ de la vista = total del dataset).
+- **Mezclar ventanas en una misma frase:** "+61%" salió de 8 semanas junto a un embudo de 7. Una afirmación =
+  una ventana, declarada.
+- **Rotular semanas con su lunes:** "semanas 6-jul a 17-ago" se lee como fechas de calendario; la última termina
+  el 23-ago. Escribir primer y último día real (el usuario sumó 101,809 en QS en vez de 116,234).
+- **Denominador distinto del que se lee:** "de 52,949, 18.5%" cuando era 7,402/39,938. Escribir num/den.
+- **Tasas redondeadas × base para reconstruir conteos:** usar los conteos exactos.
+- **Mismo nombre, varios universos** ("Nuevos" = elegibles del mes / cohorte al comprar / registros): definir el
+  universo en el subtítulo de cada vista.
+
+**Registros (New Sign Up):** volumen = `growth_dashboard_daily.signup_users` (QS Growth, diario); conversión =
+tabla por uid (−0.1%). No usar el sheet LOB (−21%, sólo titulares vinculados) ni la tarjeta Daily (MTD) como total.
+
+**Estándar de ventana para cohortes:** semanas lunes–domingo en hora Panamá, sólo completas; un horizonte Dn se
+publica sólo si el último día de la semana + n ≤ corte; periodos de igual número de semanas (≥4); reportar tasa
+agregada + dispersión semanal y probar a nivel semana (los IC agregados sobrestiman la certeza); meses calendario
+sólo para volúmenes (como x/día si el mes es parcial).
+
+**Confianza:** separar confianza en el **conteo** de confianza en la **interpretación** (p. ej. "conteo
+alto / media como bloqueador #1"). Sin grupo de control → "requiere validación", nunca "sin efecto".
+
+## 16. Legibilidad: que nadie tenga que adivinar (lecciones FTB, sep-2026)
+
+Las cifras correctas no bastan: si el lector tiene que preguntar qué significa un rótulo, el dashboard falló.
+
+**Prueba del lector (antes de entregar, elemento por elemento):** alguien que no construyó el dashboard puede
+responder, sin preguntar: (1) qué es una unidad (persona, compra, USD, día), (2) sobre qué base, (3) en qué
+ventana, (4) de qué fuente. Si alguna respuesta requiere adivinar, corregir antes de publicar.
+
+| Situación | Receta |
+|---|---|
+| Botón/columna/celda | Rótulo con unidad: «N.º de personas», «% que volvió a comprar», «Gasto medio 30 días (USD)». Ninguna letra suelta ni campo interno («N», `rev30`). |
+| Selector que cambia el significado de las celdas | Línea «Cada celda: …» bajo el selector, reescrita por opción; en el modo conteo, decir cuánto suman todas las celdas y para qué sirve («con pocas personas, el color engaña»). |
+| Mapa de calor con % o promedios | Ofrecer siempre el conteo por celda (N.º de personas) y marcar celdas con base pequeña. |
+| Comparación grupo A vs B («3.2×») | Mostrar los dos % (gráfico de dos puntos), no sólo el cociente: un 3× sobre 0.8% de la gente pesa menos que un 2× sobre 10%. Atenuar filas con alcance <1%. |
+| Título o KPI | Ícono ⓘ con: qué es, unidad, base, ventana, fuente. Generado desde un catálogo único (una ficha por elemento) que también genera la documentación funcional: al cambiar una cifra se edita la ficha y se corren ambos builds. |
+| Tooltip con % | `x% ≈ n de N <grupo>` + ventana. |
+| Pestaña de asociación (eventos previos) | Cajas «Cómo leer» (un ejemplo calculado), «Qué puedes afirmar y qué no» y «Calidad de los datos». |
+| Material de estudio / sustentación | Primero la historia en 30 s, un capítulo por pregunta, un visual por idea («de cada 100»), la frase para decirlo, qué no decir y autoexamen. Auditoría y glosarios, como anexo. |
+
+## 17. Registro de correcciones → reglas (ciclo de mejora continua)
+
+Cada corrección del usuario es un test que la skill no pasó. Se anota aquí (síntoma → causa → regla) y la regla
+se sube a la Quick Reference o al checklist de SKILL.md. Si un síntoma se repite, la regla no está donde el
+agente la lee: moverla, no reescribirla más larga.
+
+| Fecha | Tipo | Síntoma (lo que dijo o hizo el usuario) | Causa raíz | Regla (dónde vive) |
+|---|---|---|---|---|
+| 2026-09-23 | validación | «¿Estás usando el vault / MCP?» — 11 inconsistencias | QA sólo contra sí mismo | 3 capas (§15) |
+| 2026-09-23 | validación | Recalculó +61% a mano y «no cuadraba» | Dos ventanas (8 vs 7 semanas) en una frase | Una afirmación = una ventana (§15) |
+| 2026-09-23 | legibilidad | Sumó QS 6-jul→17-ago = 101,809 vs 116,118 | Semanas rotuladas con el lunes | Primer y último día real (§15) |
+| 2026-09-23 | validación | «18.5% de 52,949» no cuadraba | Denominador distinto del leído | num/den junto al % (§15, §16) |
+| 2026-09-23 | validación | FTB de septiembre cambiaba según el día | Consulta sin fecha as-of | `date_ymd ≤ corte` en cada CTE + assert (§15) |
+| 2026-09-23 | legibilidad | No entendía la pestaña Comportamiento | Sólo el «×», sin los % ni cómo leerlo | Dos puntos + cajas de lectura (§16) |
+| 2026-09-23 | narrativa | «Si ni yo lo entiendo, cómo alguien más» | Se explicó con la auditoría | Simple primero, auditoría en anexo (§16) |
+| 2026-09-23 | legibilidad | Pidió documentar cada elemento | Definiciones sólo en la cabeza del autor | ⓘ + doc funcional desde un catálogo (§16) |
+| 2026-09-23 | legibilidad | «¿Qué significa la N?» | Botón con una letra | Rótulo con unidad + línea «Cada celda» (§16) |
+| 2026-09-24 | alcance | «El análisis era solo prepago» — FTB 71,784 → 48,240 | No se confirmó el universo/línea de negocio antes de la primera consulta | Confirmar universo y línea de negocio con el usuario y ponerlo en la primera línea de definiciones (Quick Reference) |
