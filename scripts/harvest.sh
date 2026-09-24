@@ -33,4 +33,9 @@ run "cp -rn '$SRC_COMMANDS'/./ 'commands/'"
 echo "Harvesting rules from $SRC_RULES ..."
 run "cp -rn '$SRC_RULES'/./ 'rules/'"
 
+# Kiro harness: Kiro reads workspace .kiro/, so bridge the harvested skills
+# into .kiro/skills to keep its surface in sync with the other harnesses.
+echo "Harvesting skills into .kiro/skills ..."
+run "cp -rn 'skills'/./ '.kiro/skills/'"
+
 echo "Harvest complete. Run 'make security' and 'make validate' before committing."

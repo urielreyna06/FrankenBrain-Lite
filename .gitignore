@@ -36,6 +36,19 @@ backup-*/
 # SDD/agent workspaces (never commit orchestration scratch)
 .superpowers/
 
+# Stray CLI scratch artifacts (accidental redirects like `... > mcp`)
+/config
+/doctor
+/get
+/list
+/mcp
+/mcpServers
+/skillsPath
+/skills.path
+/show
+/VAULT-mcp.json.pending
+**/VAULT-mcp.json.pending
+
 # Build/runtime
 dist/
 build/

@@ -40,11 +40,13 @@ header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;justify-conte
 .brand h1{font-size:clamp(19px,2.4vw,26px);line-height:1.1}
 .brand p{color:var(--txt2);font-size:13px;margin-top:2px}
 .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.toggle{display:inline-flex;background:var(--surface2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
+.toggle{display:inline-flex;flex-wrap:wrap;background:var(--surface2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
 .toggle button{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--txt2);background:none;border:none;
   padding:7px 12px;border-radius:8px;cursor:pointer;transition:.18s;white-space:nowrap;min-height:34px}
 .toggle button.on{background:var(--mamey);color:#fff}
 .toggle button:not(.on):hover{color:var(--txt)}
+/* Chips de serie (multi-selección en gráficos de varias líneas): encendido = superficie + punto de color, no relleno mamey */
+.toggle button.chip.on{background:var(--surface);color:var(--txt);box-shadow:inset 0 0 0 1px var(--line)}
 .icon-btn{font-size:15px;padding:7px 11px}
 
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-bottom:20px}
@@ -138,6 +140,8 @@ let DATA=null, lang="es";
 function fmt(n){return (n||0).toLocaleString(lang==="es"?"es-PA":"en-US")}
 function money(n){return "$"+(n||0).toLocaleString(lang==="es"?"es-PA":"en-US",{maximumFractionDigits:0})}
 function t(){return I18N[lang]}
+// Eje Y con 4 divisiones "redondas" (1-2-2.5-5 × 10^n): marcas 0/500/1,000… en vez de 467/933.
+function niceMax(raw){const mag=10**Math.floor(Math.log10(raw/4));return 4*[1,2,2.5,5,10].map(f=>f*mag).find(st=>st*4>=raw);}
 
 // 2) render(): repinta KPIs/chart/legend/insight a partir de DATA + estado de toggles.
 //    Usa data-target + animateNumbers() para el conteo animado (easeOutCubic).
@@ -188,9 +192,19 @@ function boot(){
   };
   applyI18nStatic(); render(true);
 }
-// 3) Carga de datos: fetch al JSON externo; si falla (file:// sin servidor), usa INLINE_DATA.
-fetch("{{DATA_FILE}}.json").then(r=>r.json()).then(j=>{DATA=j;boot();})
-  .catch(()=>{DATA=window.INLINE_DATA;boot();});
+// 3) Carga de datos. INLINE_DATA vive en un <script> POSTERIOR: hay que esperar al DOM antes de leerlo.
+//    El patrón "fetch().catch(()=>INLINE_DATA)" falla al abrir por doble clic (file://): fetch rechaza antes
+//    de que el parser llegue a ese script y la página queda en blanco (reproducido 5/5 en Chromium).
+function loadData(){
+  const go=()=>{
+    const inline=window.INLINE_DATA;
+    if(inline&&Object.keys(inline).length){DATA=inline;boot();return;}
+    fetch("{{DATA_FILE}}.json").then(r=>r.json()).then(j=>{DATA=j;boot();})
+      .catch(e=>{document.body.insertAdjacentHTML("afterbegin",`<p class="insight">No se pudieron cargar los datos: ${e.message}</p>`);});
+  };
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",go); else go();
+}
+loadData();
 </script>
 <script>
 /* INLINE_DATA fallback para apertura directa por doble-clic (file://) */

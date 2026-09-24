@@ -71,6 +71,7 @@ Pick your harness. Details for each are in the collapsible blocks.
 | **Claude Code** | Add this repo as a plugin / marketplace source in `~/.claude/settings.json`. |
 | **Gemini / Antigravity** | `gemini-extension.json` declares the plugin; `GEMINI.md` is the context file. |
 | **Codex** | Clone the repo; point `AGENTS.md` and `rules/` from your Codex config. |
+| **Kiro** | Open the repo as a workspace; `.kiro/steering/` loads the brain, `kiro-extension.json` declares the plugin and `KIRO.md` is the context file. |
 
 <details>
 <summary>OpenCode</summary>
@@ -105,6 +106,23 @@ It contributes `skills/`, `agents/`, `commands/`, `rules/`.
 <summary>Codex</summary>
 
 Clone the repo; reference `AGENTS.md` and `rules/` from your Codex config.
+</details>
+
+<details>
+<summary>Kiro</summary>
+
+Open the repository as a workspace folder in the Kiro IDE. Kiro auto-loads
+`.kiro/steering/*.md`, which activates the FrankenBrain brain:
+
+- `.kiro/steering/frankenbrain.md` — catalog of skills, agents, and commands
+- `.kiro/steering/frankenbrain-rules.md` — always-loaded ECC coding standards
+- `.kiro/settings/mcp.json` — workspace MCP config (empty by default)
+
+`kiro-extension.json` declares the plugin and `KIRO.md` is the context file.
+A live `.kiro/` is also provided inside `skills/` so the brain works whether the
+workspace root is the project root or the `skills/` folder. Register MCP servers
+by editing `.kiro/settings/mcp.json` (workspace) or `~/.kiro/settings/mcp.json`
+(user-global).
 </details>
 
 ## Start with the workflow you need
