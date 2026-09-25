@@ -31,7 +31,7 @@ Do NOT activate for: cleaning project source code (that's refactoring), clearing
 
 | # | Channel | Path | Staleness / redundancy signals |
 |---|---------|------|--------------------------------|
-| 1 | Skills | `~/.claude/skills/*/` | Heavily overlapping names; never triggered in recent transcripts; domain mismatch with the user's actual work; broken or empty SKILL.md |
+| 1 | Skills | the harness skills directory (Harness facts) | Heavily overlapping names; never triggered in recent transcripts; domain mismatch with the user's actual work; broken or empty SKILL.md |
 | 2 | Memory | `~/.claude/**/memory/*.md` + its index | Multiple index entries for one topic; contents contradicting newer entries; dates that have passed; orphan files missing from the index; sub-100-word fragments that should merge |
 | 3 | Hooks | `~/.claude/hooks/` + settings | Scripts present on disk but referenced by no hook config; old versions superseded by rewrites |
 | 4 | Permissions | `permissions.allow` in `settings.json` / `settings.local.json` | Duplicate entries; specific entries already covered by a wildcard (e.g. `Bash(git push)` when `Bash(*)` is allowed); one-off grants from past experiments |
@@ -83,7 +83,7 @@ Soft-delete with undo path (capture the date once so the log can't disagree with
 ```bash
 gc_date=$(date +%Y-%m-%d)
 mkdir -p ~/.claude/_gc_trash/$gc_date
-mv ~/.claude/skills/dead-skill ~/.claude/_gc_trash/$gc_date/
+mv <harness-skills-dir>/dead-skill ~/.claude/_gc_trash/$gc_date/
 echo "$(date -Iseconds) moved skills/dead-skill -> _gc_trash/$gc_date/ (undo: mv back)" >> ~/.claude/gc_log.md
 ```
 

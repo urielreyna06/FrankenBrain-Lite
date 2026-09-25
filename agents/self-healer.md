@@ -37,7 +37,7 @@ You are the ECC self-healer agent. You keep the agentic environment (OpenCode, C
 | handoffs-index | `memory/handoffs/CURRENT.md` missing or older than the newest thread | regenerate via `handoffs-index` |
 | claude-hooks | missing `~/.claude/scripts/{handoff-timer,handoff-guard,quality-gate}.py` | report (manual restore) |
 | plugin-singular-dir | files in `~/.config/opencode/plugin/` (singular, never scanned) | move to `plugins/` (plural) |
-| skill-revived | disabled skill copies reactivated in `~/.config/opencode/skills/` | remove active copy (canonical stays in `_disabled/skills/`) |
+| skill-revived | disabled skill copies reactivated in the OpenCode skills directory (Harness facts) | remove active copy (canonical stays in `_disabled/skills/`) |
 | vault-symlink | `~/vault/memory` symlink broken or missing | recreate pointing at `~/.ecc/memory` |
 | doctor-report | vault doctor non-PASS | report details only, never touch data |
 

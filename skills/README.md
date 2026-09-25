@@ -8,7 +8,7 @@ Source clone: `~/projects/ECC` (shallow, pinned to latest main at harvest time).
 
 ## Skills
 
-### `~/.config/opencode/skills/`
+### Canonical skills (`skills/` in this repository)
 
 - growth-log, knowledge-ops, skill-scout, rules-distill — remember -> improve loop (superpowers lacks this)
 - search-first — research before coding
@@ -59,8 +59,7 @@ for go, cpp, java, kotlin, php, python, rust.
 
 - Core workflow: plan, tdd, code-review, security, build-fix, e2e,
   refactor-clean, verify, checkpoint, learn, update-docs
-- continuous-learning CLI (paths adapted from Claude plugin roots to
-  `~/.config/opencode/skills/continuous-learning-v2/scripts/instinct-cli.py`):
+- continuous-learning CLI (called through the `fbl instinct` helper):
   instinct-status, instinct-export, instinct-import, promote, projects, evolve
 
 ## Deliberately excluded
@@ -74,13 +73,10 @@ for go, cpp, java, kotlin, php, python, rust.
 
 ## Updating
 
-These are copies, not the repo. To refresh from upstream:
+This directory is the single source. To refresh a skill from upstream ECC:
 
     git -C ~/projects/ECC pull
-    for s in growth-log knowledge-ops skill-scout rules-distill search-first security-review verification-loop intent-driven-development error-handling agent-introspection-debugging context-budget cost-aware-llm-pipeline continuous-learning-v2 unified-memory; do
-      cp -r ~/projects/ECC/skills/$s ~/.config/opencode/skills/
-    done
+    cp -r ~/projects/ECC/skills/<name> "$(fbl root)/skills/"
 
-Re-apply the opencode path adaptations afterwards (grep for `~/.claude` in the
-copied skills/commands, and re-run `bash /tmp/opencode/harvest-agents.sh` for
-agents/commands).
+Then re-check harness neutrality (`bash test/test-skill-neutrality.sh`), run
+`make check`, and propagate with `make update`.

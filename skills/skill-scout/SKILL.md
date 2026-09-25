@@ -42,14 +42,16 @@ Search installed and marketplace skill names first. Local sources are preferred
 because they are already part of the user's environment.
 
 ```bash
-find ~/.claude/skills ~/.config/opencode/skills ~/.agents/skills -maxdepth 2 -name SKILL.md 2>/dev/null | grep -iE "keyword|synonym"
+find "$(fbl root)/skills" -maxdepth 2 -name SKILL.md 2>/dev/null | grep -iE "keyword|synonym"
 find ~/.claude/plugins/marketplaces ~/.cache/opencode/packages -path '*/skills/*/SKILL.md' 2>/dev/null | grep -iE "keyword|synonym"
 ```
+
+Also list the harness skills directory named in the bootstrap "Harness facts".
 
 Then search frontmatter descriptions:
 
 ```bash
-grep -RilE "keyword|synonym" ~/.claude/skills ~/.config/opencode/skills ~/.agents/skills ~/.cache/opencode/packages 2>/dev/null
+grep -RilE "keyword|synonym" "$(fbl root)/skills" ~/.cache/opencode/packages 2>/dev/null
 ```
 
 ### Step 3 - Search Remote Sources

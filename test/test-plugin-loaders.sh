@@ -34,7 +34,7 @@ if command -v opencode >/dev/null 2>&1; then
   OPENCODE_DISABLE_PROJECT_CONFIG=1 \
   timeout "${FBL_OPENCODE_LOADER_TIMEOUT:-300s}" opencode debug skill >"$skills_output" || fail "OpenCode loader timed out or failed"
 
-  for skill in brainstorming writing-plans test-driven-development systematic-debugging verification-before-completion; do
+  for skill in growth-log search-first graphify; do
     grep -q "\"$skill\"" "$skills_output" || fail "OpenCode did not load skill: $skill"
   done
   echo "OPENCODE 1.18.32 SKILL LOAD PASS"

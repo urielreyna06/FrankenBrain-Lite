@@ -1,7 +1,5 @@
 ---
-name: prune
 description: Delete pending instincts older than 30 days that were never promoted
-command: true
 ---
 
 # Prune Pending Instincts
@@ -10,16 +8,10 @@ Remove expired pending instincts that were auto-generated but never reviewed or 
 
 ## Implementation
 
-Run the instinct CLI using the plugin root path:
+Run the instinct CLI through the `fbl` helper (same command in every harness):
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/continuous-learning-v2/scripts/instinct-cli.py" prune
-```
-
-Or if `CLAUDE_PLUGIN_ROOT` is not set (manual installation):
-
-```bash
-python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py prune
+fbl instinct prune $ARGUMENTS
 ```
 
 ## Usage

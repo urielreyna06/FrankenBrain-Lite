@@ -36,7 +36,7 @@ CORE_SKILLS=(
 )
 
 for skill in "${CORE_SKILLS[@]}"; do
-  assert_file "skills/$skill/SKILL.md"
+  [[ ! -e "skills/$skill" ]] || fail "retired skill present: $skill"
   assert_not_exists ".kiro/skills/$skill"
 done
 
@@ -70,6 +70,7 @@ assert_contains rules/common/persistent-memory.md memory/handoffs/CURRENT.md
 
 assert_contains AGENTS.md brainstorming
 assert_contains AGENTS.md verification-before-completion
+assert_contains AGENTS.md rules/common/frankenbrain-workflow.md
 assert_contains CLAUDE.md '@rules/common/frankenbrain-workflow.md'
 assert_contains CLAUDE.md '@rules/common/persistent-memory.md'
 assert_contains GEMINI.md '@./rules/common/frankenbrain-workflow.md'
@@ -92,8 +93,8 @@ for documentation in README.md docs/memory-wsl.md; do
   assert_contains "$documentation" 'OpenCode 1.18.32'
   assert_contains "$documentation" 'Gemini static validation'
 done
-assert_contains README.md 'skills-36'
-assert_contains README.md '| [`skills/`](skills) | 36 |'
+assert_contains README.md 'skills-32'
+assert_contains README.md '| [`skills/`](skills) | 32 |'
 
 private_path_matches="$({
   linux_home_pattern='/home/'"uriel"

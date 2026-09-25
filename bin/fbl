@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Stable entry point for FrankenBrain-Lite helper scripts, independent of harness skill directories.
+set -euo pipefail
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+ROOT="$(cd "$(dirname "$SELF")/.." && pwd)"
+
+usage() { echo "usage: fbl {instinct|rules-scan skills|rules-scan rules|migrate-homunculus|root} [args...]" >&2; exit 2; }
+[[ $# -ge 1 ]] || usage
+command="$1"; shift
+case "$command" in
+  instinct) exec python3 "$ROOT/skills/continuous-learning-v2/scripts/instinct-cli.py" "$@" ;;
+  rules-scan)
+    target="${1:-}"; shift || true
+    case "$target" in
+      skills) exec bash "$ROOT/skills/rules-distill/scripts/scan-skills.sh" "$@" ;;
+      rules) exec bash "$ROOT/skills/rules-distill/scripts/scan-rules.sh" "$@" ;;
+      *) usage ;;
+    esac ;;
+  migrate-homunculus) exec bash "$ROOT/skills/continuous-learning-v2/scripts/migrate-homunculus.sh" "$@" ;;
+  root) echo "$ROOT" ;;
+  *) usage ;;
+esac

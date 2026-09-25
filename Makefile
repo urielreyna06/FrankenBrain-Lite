@@ -20,6 +20,7 @@ test:
 	node test/test-agents.mjs
 	node test/test-instincts.mjs
 	node test/test-bootstrap.mjs
+	bash test/test-skill-neutrality.sh
 
 harvest:
 	bash scripts/harvest.sh --apply

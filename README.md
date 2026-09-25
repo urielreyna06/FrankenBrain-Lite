@@ -5,7 +5,7 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0b0f1a?style=flat-square&color=6d5dff" alt="MIT"></a>
   <a href="https://github.com/urielreyna06/FrankenBrain-Lite/actions"><img src="https://img.shields.io/github/actions/workflow/status/urielreyna06/FrankenBrain-Lite/validate.yml?branch=master&style=flat-square" alt="CI"></a>
-  <img src="https://img.shields.io/badge/skills-36-0b0f1a?style=flat-square&color=22d3ee" alt="36 skills">
+  <img src="https://img.shields.io/badge/skills-32-0b0f1a?style=flat-square&color=22d3ee" alt="32 skills">
   <img src="https://img.shields.io/badge/agents-26-0b0f1a?style=flat-square&color=a78bfa" alt="26 agents">
   <img src="https://img.shields.io/badge/security-hard%20gate-0b0f1a?style=flat-square&color=ef4444" alt="Security gate">
   <img src="https://img.shields.io/badge/zero%20credentials-true-0b0f1a?style=flat-square&color=22c55e" alt="Zero credentials">
@@ -33,7 +33,7 @@ clone → register → harvest → secure
 
 | Component | Count | Notes |
 |-----------|:-----:|-------|
-| [`skills/`](skills) | 36 | Procedural workflow skills — each `<name>/SKILL.md` |
+| [`skills/`](skills) | 32 | Procedural workflow skills — each `<name>/SKILL.md` |
 | [`agents/`](agents) | 26 | Specialists for review, build repair, security, architecture |
 | [`commands/`](commands) | 24 | Quick triggers: `plan`, `code-review`, `build-fix`, `save-session`… |
 | [`rules/`](rules) | 11 | Always-loaded standards: `common/` + a full `java/` stack |

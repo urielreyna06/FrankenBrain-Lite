@@ -10,7 +10,9 @@ Packaged multi-harness AI work environment as a cloneable plugin.
 
 ## Mandatory workflow
 
-For implementation work, open and follow the matching bundled skill before
+The full 8-step workflow (design → plan → test → implement → review → verify →
+remember → improve) is `rules/common/frankenbrain-workflow.md`. For
+implementation work, open and follow the matching Superpowers skill before
 acting:
 
 | Trigger | Skill |
