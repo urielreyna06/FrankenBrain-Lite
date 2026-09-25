@@ -1,0 +1,2 @@
+# Exact trimmed lines that exist only in live harness copies and are deliberately NOT merged
+# (harness-specific paths replaced by neutral wording). One line per entry.

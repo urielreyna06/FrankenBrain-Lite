@@ -1,0 +1,7 @@
+# Names removed from the repository on purpose. Live copies of these are not "absorb" candidates.
+brainstorming
+writing-plans
+test-driven-development
+systematic-debugging
+verification-before-completion
+using-dev

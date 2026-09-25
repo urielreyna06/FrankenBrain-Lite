@@ -15,6 +15,8 @@ test:
 	node test/test-opencode-plugin.mjs
 	bash test/test-session-bootstrap.sh
 	bash test/test-plugin-loaders.sh
+	node test/test-frontmatter.mjs
+	node test/test-reconcile.mjs
 
 harvest:
 	bash scripts/harvest.sh --apply
