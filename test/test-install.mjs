@@ -33,6 +33,7 @@ try {
     Stop: [{ matcher: "*", hooks: [{ type: "command", command: "python3 ~/.claude/scripts/quality-gate.py" }] }] } }, null, 2))
   put(".config/opencode/opencode.jsonc", JSON.stringify({ plugin: ["superpowers@git+https://github.com/obra/superpowers.git"] }, null, 2))
   put(".config/opencode/skills/search-first/SKILL.md", "old")
+  put(".config/opencode/skills/README.md", "not a skill")
   put(".config/opencode/agent/java-reviewer.md", "old")
   put(".config/opencode/command/plan.md", "old")
   put(".agents/skills/unified-memory/SKILL.md", "old")

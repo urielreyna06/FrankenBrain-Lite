@@ -9,7 +9,7 @@ const countManaged = (dir, ext) => fs.existsSync(dir)
   ? fs.readdirSync(dir).filter((f) => f.endsWith(ext) && fs.readFileSync(path.join(dir, f), "utf8").includes(MANAGED_MARKER)).length : 0
 
 function looseDuplicates(ctx, dirs) {
-  const names = fs.readdirSync(path.join(ctx.root, "skills"))
+  const names = fs.readdirSync(path.join(ctx.root, "skills"), { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name)
   return dirs.flatMap((dir) => names.filter((n) => fs.existsSync(path.join(ctx.home, dir, n))).map((n) => `${dir}/${n}`))
 }
 
