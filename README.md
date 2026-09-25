@@ -115,6 +115,7 @@ Clone the repo; reference `AGENTS.md` and `rules/` from your Codex config.
 | Hunting a bug | `systematic-debugging` |
 | Reviewing new code | `code-review`, then your language's reviewer |
 | A failing build | the `build-error-resolver` for your stack |
+| Checking a cloned Lite package | `make health` (read-only diagnosis and recovery steps) |
 | Shipping to prod | `security-review` · `verification-before-completion` |
 | Ending / resuming a session | `save-session` / `resume-session` |
 | Auditing your agent config | `harness-audit` · `config-gc` · `context-budget` |
@@ -146,6 +147,7 @@ Enforcement is mechanical:
 
 ```bash
 make harvest        # refresh harvested ECC artifacts (dry-run; --apply to write)
+make health         # inspect this Lite checkout and print recovery steps
 make validate       # parse config + check SKILL.md frontmatter
 make security       # scan for credentials (exit non-zero on any hit)
 make check          # validate + security
@@ -153,6 +155,12 @@ make install-hooks  # install the pre-commit gate
 ```
 
 The pre-commit gate runs on every commit; CI enforces the same checks on push.
+
+`make health` is a separate, read-only check of the Lite package layout. It
+reports missing assets and invalid package identity, and suggests recovery
+without changing files. Use `node scripts/lite-health.mjs --json` for a machine-
+readable report. The source and scope of this adapted use case are documented in
+[`docs/lite-healthchecks.md`](docs/lite-healthchecks.md).
 
 ## License
 
