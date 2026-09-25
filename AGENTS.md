@@ -27,6 +27,11 @@ The approval gates and RED → GREEN → REFACTOR sequence in those skills are
 mandatory. Read-only questions and explanations do not require an implementation
 gate.
 
+## Install
+
+Run `make install` once (Claude Code, OpenCode, Codex); after editing the repo run
+`make update`. `make verify-install` checks the result.
+
 ## Persistent memory
 
 Use shared ECC `user` memory only when `FRANKENBRAIN_VAULT_ROOT` is configured.

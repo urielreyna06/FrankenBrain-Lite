@@ -1,4 +1,4 @@
-.PHONY: validate security test harvest help check install update uninstall verify-install
+.PHONY: validate security test help check install update uninstall verify-install
 
 help:
 	@grep -E '^[a-zA-Z_-]+:' Makefile | sed 's/:/  /'
@@ -23,9 +23,6 @@ test:
 	bash test/test-skill-neutrality.sh
 	bash test/test-observer-backend.sh
 	node test/test-install.mjs
-
-harvest:
-	bash scripts/harvest.sh --apply
 
 check: security validate test
 

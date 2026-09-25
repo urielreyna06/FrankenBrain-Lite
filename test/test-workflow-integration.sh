@@ -105,4 +105,16 @@ private_path_matches="$({
 })"
 [[ -z "$private_path_matches" ]] || fail "distributable files contain a personal path: $private_path_matches"
 
+for context_file in CLAUDE.md GEMINI.md; do
+  while IFS= read -r import_path; do
+    [[ -e "${import_path#./}" ]] || fail "$context_file imports a missing file: $import_path"
+  done < <(sed -n 's/^@\(.*\)$/\1/p' "$context_file")
+done
+assert_not_exists scripts/harvest.sh
+assert_contains README.md 'make install'
+assert_contains README.md 'make verify-install'
+assert_contains README.md 'agents-27'
+assert_contains README.md '| [`skills/`](skills) | 32 |'
+if grep -q '^harvest:' Makefile; then fail "Makefile still has a harvest target"; fi
+
 echo "WORKFLOW INTEGRATION PASS"

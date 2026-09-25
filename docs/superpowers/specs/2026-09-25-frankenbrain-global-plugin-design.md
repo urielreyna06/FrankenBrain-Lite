@@ -153,3 +153,22 @@ Reversión: `make uninstall` quita los plugins, restaura `_disabled/<fecha>/` y 
 | Nombres con prefijo en Claude (`frankenbrain-lite:x`) rompen referencias a nombres sin prefijo | `test-skill-neutrality` + revisión de referencias cruzadas entre skills |
 | Costo del observer | Medición en el paso 6; el modelo es configurable por harness |
 | Skills de `.kiro/` divergen del repo | Fuera de alcance; se documenta |
+
+## Spec addenda decided while planning
+
+1. **Content reconciliation comes first** (user decision "la más completa gana"): live agents/skills/commands differ from the repo (e.g. Claude `code-reviewer` 246 lines vs repo 89). Tasks 2–3 merge them with a user checkpoint.
+2. **Instinct injection:** the FBL bootstrap injects instincts only for Codex. Claude keeps ECC's SessionStart injection with `ECC_MAX_INJECTED_INSTINCTS=12` (fixes H3 truncation); OpenCode keeps `ecc-learning.ts`. This avoids double injection.
+3. **`fbl` helper on PATH:** commands call `fbl instinct …` / `fbl rules-scan …` instead of absolute skill paths that disappear when loose copies move.
+4. **Global learned skills are written to the repo** (`learn-eval` → `$(fbl root)/skills/<name>/`), then `make update` — improvements land in the single source.
+
+## Addenda from implementation (2026-09-25)
+
+1. The frontmatter parser also handles block scalars (`>-`, `|`) and lists under nested keys (13 real skills use them).
+2. Reconciliation accepts superseded live lines per item (`<category>/<name>: <line>`), not only globally.
+3. Canonical commands keep `agent`/`subtask` (OpenCode) and `argument-hint` (Claude); instinct commands call `fbl instinct`; `learn` and `learn-eval` write to `$(fbl root)/skills/`.
+4. `graphify` ships the lazy-loaded `SKILL.md`; the full runbook stays in `references/guide.md`.
+5. `rules-distill` `scan-skills.sh` defaults to the repository `skills/` directory.
+6. Instinct near-duplicate detection is plural-insensitive.
+7. The OpenCode loader test timeout defaults to 300s (cold start is load-sensitive) and is configurable with `FBL_OPENCODE_LOADER_TIMEOUT`.
+8. The personal-path check no longer depends on `rg`.
+

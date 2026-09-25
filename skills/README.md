@@ -1,10 +1,8 @@
-# Harvested ECC assets for OpenCode
+# FrankenBrain-Lite skills
 
-These skills, agents, commands, and the learning plugin were harvested from
-https://github.com/affaan-m/ECC (MIT licensed) to complement the superpowers
-plugin without overlapping its workflow skills.
-
-Source clone: `~/projects/ECC` (shallow, pinned to latest main at harvest time).
+This directory is the single source of skills for every harness. Most skills
+came from https://github.com/affaan-m/ECC (MIT licensed) and complement the
+superpowers plugin without overlapping its workflow skills.
 
 ## Skills
 
@@ -73,10 +71,5 @@ for go, cpp, java, kotlin, php, python, rust.
 
 ## Updating
 
-This directory is the single source. To refresh a skill from upstream ECC:
-
-    git -C ~/projects/ECC pull
-    cp -r ~/projects/ECC/skills/<name> "$(fbl root)/skills/"
-
-Then re-check harness neutrality (`bash test/test-skill-neutrality.sh`), run
-`make check`, and propagate with `make update`.
+Edit skills in this repository and run `make update`. Before committing, run
+`bash test/test-skill-neutrality.sh` and `make check`.
