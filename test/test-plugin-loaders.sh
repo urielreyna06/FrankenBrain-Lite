@@ -38,6 +38,14 @@ if command -v opencode >/dev/null 2>&1; then
     grep -q "\"$skill\"" "$skills_output" || fail "OpenCode did not load skill: $skill"
   done
   echo "OPENCODE 1.18.32 SKILL LOAD PASS"
+  agents_output="$TMP_ROOT/opencode-agents.txt"
+  HOME="$TMP_ROOT/home" XDG_CONFIG_HOME="$TMP_ROOT/config" XDG_DATA_HOME="$TMP_ROOT/data" XDG_CACHE_HOME="$TMP_ROOT/cache" \
+  OPENCODE_DISABLE_AUTOUPDATE=1 OPENCODE_DISABLE_MODELS_FETCH=1 OPENCODE_DISABLE_DEFAULT_PLUGINS=1 OPENCODE_DISABLE_PROJECT_CONFIG=1 \
+  timeout "${FBL_OPENCODE_LOADER_TIMEOUT:-300s}" opencode agent list >"$agents_output" || fail "OpenCode agent list failed"
+  for agent in java-reviewer self-healer code-reviewer; do
+    grep -q "^$agent (subagent)" "$agents_output" || fail "OpenCode did not register agent: $agent"
+  done
+  echo "OPENCODE AGENT REGISTRATION PASS"
 else
   echo "OPENCODE SKILL LOAD SKIP: opencode is unavailable"
 fi
