@@ -18,6 +18,7 @@ test:
 	node test/test-frontmatter.mjs
 	node test/test-reconcile.mjs
 	node test/test-agents.mjs
+	node test/test-instincts.mjs
 
 harvest:
 	bash scripts/harvest.sh --apply
