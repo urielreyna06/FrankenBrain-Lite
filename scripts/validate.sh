@@ -77,6 +77,8 @@ try:
     codex = load(".codex-plugin/plugin.json")
     validate_reference("Codex skills", codex["skills"])
     validate_reference("Codex hooks", codex["hooks"])
+    catalog = load(".agents/plugins/marketplace.json")
+    validate_reference("Codex catalog source", catalog["plugins"][0]["source"]["path"])
 
     portable = load("plugin.json")
     validate_reference("portable skills", portable["skills"])

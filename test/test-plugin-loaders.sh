@@ -50,6 +50,30 @@ else
   echo "OPENCODE SKILL LOAD SKIP: opencode is unavailable"
 fi
 
+python3 - "$ROOT" <<'PY' || fail "manifest contract"
+import json, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+claude = json.loads((root / ".claude-plugin/plugin.json").read_text())
+assert claude.get("agents") == [], "Claude manifest must ship agents: []"
+codex = json.loads((root / ".codex-plugin/plugin.json").read_text())
+assert codex["hooks"] == "./hooks/codex-hooks.json"
+hooks = json.loads((root / "hooks/codex-hooks.json").read_text())["hooks"]
+for event in ("SessionStart", "PreToolUse", "PostToolUse"):
+    assert event in hooks, event
+catalog = json.loads((root / ".agents/plugins/marketplace.json").read_text())
+assert catalog["plugins"][0]["source"] == {"source": "local", "path": "./"}
+claude_hooks = json.loads((root / "hooks/hooks.json").read_text())["hooks"]
+assert "PostToolUse" in claude_hooks and "PreToolUse" in claude_hooks
+PY
+echo "MANIFEST CONTRACT PASS"
+
+if command -v codex >/dev/null 2>&1; then
+  codex_home="$TMP_ROOT/codex-home"; mkdir -p "$codex_home"
+  CODEX_HOME="$codex_home" timeout 120s codex plugin marketplace add "$ROOT" >/dev/null 2>&1 || fail "codex marketplace add failed"
+  CODEX_HOME="$codex_home" timeout 120s codex plugin add frankenbrain-lite@frankenbrain-lite >/dev/null 2>&1 || fail "codex plugin add failed"
+  find "$codex_home/plugins/cache/frankenbrain-lite" -name SKILL.md -path '*growth-log*' | grep -q . || fail "codex cache lacks skills"
+  echo "CODEX LOCAL MARKETPLACE INSTALL PASS"
+fi
 echo "CODEX MANIFEST STATIC VALIDATION: codex 0.154.0 has no local plugin validate command"
 if command -v gemini >/dev/null 2>&1; then
   echo "GEMINI LIVE LOADER CHECK AVAILABLE BUT NOT AUTOMATED BY THIS STATIC CONTRACT"

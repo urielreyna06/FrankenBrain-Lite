@@ -11,7 +11,7 @@
       "name": "frankenbrain-lite",
       "source": "./",
       "description": "Portable Superpowers workflow, engineering skills, rules, and opt-in shared memory bootstrap.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "author": {
         "name": "Uriel Reyna"
       },

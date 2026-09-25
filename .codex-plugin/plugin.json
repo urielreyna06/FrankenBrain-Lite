@@ -1,6 +1,6 @@
 {
   "name": "frankenbrain-lite",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Portable multi-harness engineering workflow with opt-in shared-memory bootstrap.",
   "author": {
     "name": "Uriel Reyna"
@@ -15,7 +15,7 @@
     "debugging"
   ],
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json",
+  "hooks": "./hooks/codex-hooks.json",
   "interface": {
     "displayName": "FrankenBrain Lite",
     "shortDescription": "Portable engineering workflow",
