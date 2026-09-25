@@ -1,2 +1,210 @@
 # Exact trimmed lines that exist only in live harness copies and are deliberately NOT merged
-# (harness-specific paths replaced by neutral wording). One line per entry.
+# (harness-specific paths replaced by neutral wording, or older wording superseded by a more
+# complete canonical version). One line per entry; prefix "<category>/<name>: " to scope it to one item.
+agents/code-reviewer: 1. Run git diff to see recent changes
+agents/code-reviewer: 2. Focus on modified files
+agents/code-reviewer: 3. Begin review immediately
+agents/code-reviewer: Review checklist:
+agents/code-reviewer: - Code is simple and readable
+agents/code-reviewer: - Functions and variables are well-named
+agents/code-reviewer: - No duplicated code
+agents/code-reviewer: - Proper error handling
+agents/code-reviewer: - No exposed secrets or API keys
+agents/code-reviewer: - Input validation implemented
+agents/code-reviewer: - Good test coverage
+agents/code-reviewer: - Performance considerations addressed
+agents/code-reviewer: - Time complexity of algorithms analyzed
+agents/code-reviewer: - Licenses of integrated libraries checked
+agents/code-reviewer: Provide feedback organized by priority:
+agents/code-reviewer: - Critical issues (must fix)
+agents/code-reviewer: - Warnings (should fix)
+agents/code-reviewer: - Suggestions (consider improving)
+agents/code-reviewer: Include specific examples of how to fix issues.
+agents/code-reviewer: ## Security Checks (CRITICAL)
+agents/code-reviewer: - Hardcoded credentials (API keys, passwords, tokens)
+agents/code-reviewer: - SQL injection risks (string concatenation in queries)
+agents/code-reviewer: - XSS vulnerabilities (unescaped user input)
+agents/code-reviewer: - Missing input validation
+agents/code-reviewer: - Insecure dependencies (outdated, vulnerable)
+agents/code-reviewer: - Path traversal risks (user-controlled file paths)
+agents/code-reviewer: - CSRF vulnerabilities
+agents/code-reviewer: - Authentication bypasses
+agents/code-reviewer: ## Code Quality (HIGH)
+agents/code-reviewer: - Large functions (>50 lines)
+agents/code-reviewer: - Large files (>800 lines)
+agents/code-reviewer: - Deep nesting (>4 levels)
+agents/code-reviewer: - Missing error handling (try/catch)
+agents/code-reviewer: - console.log statements
+agents/code-reviewer: - Mutation patterns
+agents/code-reviewer: - Missing tests for new code
+agents/code-reviewer: ## Performance (MEDIUM)
+agents/code-reviewer: - Inefficient algorithms (O(n^2) when O(n log n) possible)
+agents/code-reviewer: - Unnecessary re-renders in React
+agents/code-reviewer: - Missing memoization
+agents/code-reviewer: - Large bundle sizes
+agents/code-reviewer: - Unoptimized images
+agents/code-reviewer: - Missing caching
+agents/code-reviewer: - N+1 queries
+agents/code-reviewer: ## Best Practices (MEDIUM)
+agents/code-reviewer: - Emoji usage in code/comments
+agents/code-reviewer: - TODO/FIXME without tickets
+agents/code-reviewer: - Missing JSDoc for public APIs
+agents/code-reviewer: - Accessibility issues (missing ARIA labels, poor contrast)
+agents/code-reviewer: - Poor variable naming (x, tmp, data)
+agents/code-reviewer: - Magic numbers without explanation
+agents/code-reviewer: - Inconsistent formatting
+agents/code-reviewer: For each issue:
+agents/code-reviewer: [CRITICAL] Hardcoded API key
+agents/code-reviewer: Issue: API key exposed in source code
+agents/code-reviewer: Fix: Move to environment variable
+agents/code-reviewer: const apiKey = "sk-abc123";  // Bad
+agents/code-reviewer: const apiKey = process.env.API_KEY;  // Good
+agents/code-reviewer: - Approve: No CRITICAL or HIGH issues
+agents/code-reviewer: - Warning: MEDIUM issues only (can merge with caution)
+agents/code-reviewer: - Block: CRITICAL or HIGH issues found
+agents/code-reviewer: Add your project-specific checks here. Examples:
+agents/code-reviewer: - Follow MANY SMALL FILES principle (200-400 lines typical)
+agents/code-reviewer: - No emojis in codebase
+agents/code-reviewer: - Use immutability patterns (spread operator)
+agents/code-reviewer: - Verify database RLS policies
+agents/code-reviewer: - Check AI integration error handling
+agents/code-reviewer: - Validate cache fallback behavior
+agents/code-reviewer: Since hooks are not available in OpenCode, remember to:
+agents/code-reviewer: - Run `prettier --write` on modified files after reviewing
+agents/code-reviewer: - Run `tsc --noEmit` to verify type safety
+agents/code-reviewer: - Check for console.log statements and remove them
+agents/harness-optimizer: - baseline scorecard
+agents/harness-optimizer: - applied changes
+agents/harness-optimizer: - measured improvements
+agents/harness-optimizer: - remaining risks
+agents/security-reviewer: const apiKey = "sk-proj-xxxxx"
+agents/security-reviewer: const password = "admin123"
+agents/docs-lookup: Call the Context7 MCP tool for resolving the library ID with:
+agents/docs-lookup: Call the Context7 MCP tool for querying docs with:
+agents/docs-lookup: Action: Call the resolve-library-id tool with libraryName "Next.js", query as above; pick `/vercel/next.js` or versioned ID; call the query-docs tool with that libraryId and same query; summarize and include middleware example from docs.
+agents/architect: # ADR-001: [Decision Title]
+agents/architect: [What situation requires a decision]
+agents/architect: [The decision made]
+agents/architect: - [Benefit 1]
+agents/architect: - [Benefit 2]
+agents/architect: - [Drawback 1]
+agents/architect: - [Drawback 2]
+agents/architect: - **[Alternative 1]**: [Description and why rejected]
+agents/architect: - **[Alternative 2]**: [Description and why rejected]
+agents/architect: Accepted/Proposed/Deprecated
+agents/architect: YYYY-MM-DD
+agents/java-reviewer: When invoked:
+agents/java-reviewer: 2. Run `mvn verify -q` or `./gradlew check` if available
+agents/java-reviewer: - **SQL injection**: String concatenation in `@Query` or `JdbcTemplate` — use bind parameters (`:param` or `?`)
+agents/java-reviewer: - **Code injection**: User-controlled input passed to `ScriptEngine.eval(...)` — avoid executing untrusted scripts
+agents/java-reviewer: - **Path traversal**: User-controlled input passed to `new File(userInput)`, `Paths.get(userInput)` without validation
+agents/java-reviewer: - **Hardcoded secrets**: API keys, passwords, tokens in source — must come from environment or secrets manager
+agents/java-reviewer: - **PII/token logging**: `log.info(...)` calls near auth code that expose passwords or tokens
+agents/java-reviewer: - **Missing `@Valid`**: Raw `@RequestBody` without Bean Validation
+agents/java-reviewer: - **CSRF disabled without justification**: Document why if disabled for stateless JWT APIs
+agents/java-reviewer: - **`.get()` on Optional**: Calling `repository.findById(id).get()` without `.isPresent()` — use `.orElseThrow()`
+agents/java-reviewer: - **Missing `@RestControllerAdvice`**: Exception handling scattered across controllers
+agents/java-reviewer: ### HIGH -- Spring Boot Architecture
+agents/java-reviewer: - **Field injection**: `@Autowired` on fields — constructor injection is required
+agents/java-reviewer: - **Business logic in controllers**: Controllers must delegate to the service layer immediately
+agents/java-reviewer: - **`@Transactional` on wrong layer**: Must be on service layer, not controller or repository
+agents/java-reviewer: - **Missing `@Transactional(readOnly = true)`**: Read-only service methods must declare this
+agents/java-reviewer: - **Entity exposed in response**: JPA entity returned directly from controller — use DTO or record projection
+agents/java-reviewer: ### HIGH -- JPA / Database
+agents/java-reviewer: - **N+1 query problem**: `FetchType.EAGER` on collections — use `JOIN FETCH` or `@EntityGraph`
+agents/java-reviewer: - **Unbounded list endpoints**: Returning `List<T>` without `Pageable` and `Page<T>`
+agents/java-reviewer: - **Mutable singleton fields**: Non-final instance fields in `@Service` / `@Component` are a race condition
+agents/java-reviewer: - **Unbounded `@Async`**: `CompletableFuture` or `@Async` without a custom `Executor`
+agents/java-reviewer: - **`@SpringBootTest` for unit tests**: Use `@WebMvcTest` for controllers, `@DataJpaTest` for repositories
+agents/java-reviewer: - **Missing Mockito extension**: Service tests must use `@ExtendWith(MockitoExtension.class)`
+agents/java-reviewer: First, determine the build tool by checking for `pom.xml` (Maven) or `build.gradle`/`build.gradle.kts` (Gradle).
+agents/java-reviewer: ### Maven-Only Commands
+agents/java-reviewer: ./mvnw compile -q 2>&1 || mvn compile -q 2>&1
+agents/java-reviewer: ./mvnw verify -q 2>&1 || mvn verify -q 2>&1
+agents/java-reviewer: ./mvnw checkstyle:check 2>&1 || echo "checkstyle not configured"
+agents/java-reviewer: ./mvnw spotbugs:check 2>&1 || echo "spotbugs not configured"
+agents/java-reviewer: ./mvnw dependency-check:check 2>&1 || echo "dependency-check not configured"
+agents/java-reviewer: ./mvnw test 2>&1
+agents/java-reviewer: ### Gradle-Only Commands
+agents/java-reviewer: ./gradlew compileJava 2>&1
+agents/java-reviewer: ./gradlew check 2>&1
+agents/java-reviewer: ./gradlew test 2>&1
+agents/java-reviewer: ### Common Checks (Both)
+agents/java-reviewer: grep -rn "@Autowired" src/main/java --include="*.java"
+agents/java-reviewer: - **Spring Boot**: See `skill: springboot-patterns`
+agents/java-reviewer: - **Quarkus**: See `skill: quarkus-patterns`
+agents/java-build-resolver: 4. Handle annotation processor errors (Lombok, MapStruct, Spring)
+agents/java-build-resolver: First, detect the build system by checking for `pom.xml` (Maven) or `build.gradle`/`build.gradle.kts` (Gradle). Use the detected build tool's wrapper (mvnw vs mvn, gradlew vs gradle).
+agents/java-build-resolver: ### Maven-Only Commands
+agents/java-build-resolver: ### Gradle-Only Commands
+agents/java-build-resolver: 1. ./mvnw compile OR ./gradlew build  -> Parse error message
+agents/java-build-resolver: 2. Read affected file                 -> Understand context
+agents/java-build-resolver: 3. Apply minimal fix                  -> Only what's needed
+agents/java-build-resolver: 4. ./mvnw compile OR ./gradlew build  -> Verify fix
+agents/java-build-resolver: 5. ./mvnw test OR ./gradlew test      -> Ensure nothing broke
+agents/java-build-resolver: | `variable X might not have been initialized` | Uninitialized local variable | Initialize variable before use |
+agents/java-build-resolver: Final: `Build Status: SUCCESS/FAILED | Errors Fixed: N | Files Modified: list`
+agents/java-build-resolver: - **Spring Boot**: See `skill: springboot-patterns`
+agents/java-build-resolver: - **Quarkus**: See `skill: quarkus-patterns`
+agents/doc-updater: 1. **Codemap Generation** — Create architectural maps from codebase structure
+agents/doc-updater: 2. **Documentation Updates** — Refresh READMEs and guides from code
+agents/doc-updater: 3. **AST Analysis** — Use TypeScript compiler API to understand structure
+agents/doc-updater: 4. **Dependency Mapping** — Track imports/exports across modules
+agents/doc-updater: 5. **Documentation Quality** — Ensure docs match reality
+agents/doc-updater: ## Codemap Workflow
+agents/doc-updater: ### 1. Analyze Repository
+agents/doc-updater: - Identify workspaces/packages
+agents/doc-updater: - Map directory structure
+agents/doc-updater: - Find entry points (apps/*, packages/*, services/*)
+agents/doc-updater: - Detect framework patterns
+agents/doc-updater: ### 2. Analyze Modules
+agents/doc-updater: For each module: extract exports, map imports, identify routes, find DB models, locate workers
+agents/doc-updater: Output structure:
+agents/doc-updater: ├── INDEX.md          # Overview of all areas
+agents/doc-updater: ├── frontend.md       # Frontend structure
+agents/doc-updater: ├── backend.md        # Backend/API structure
+agents/doc-updater: ├── database.md       # Database schema
+agents/doc-updater: ├── integrations.md   # External services
+agents/doc-updater: └── workers.md        # Background jobs
+agents/doc-updater: [How data flows through this area]
+agents/doc-updater: Links to other codemaps
+agents/doc-updater: 1. **Extract** — Read JSDoc/TSDoc, README sections, env vars, API endpoints
+agents/doc-updater: 2. **Update** — README.md, docs/GUIDES/*.md, package.json, API docs
+agents/doc-updater: 3. **Validate** — Verify files exist, links work, examples run, snippets compile
+agents/doc-updater: ## Key Principles
+agents/doc-updater: 1. **Single Source of Truth** — Generate from code, don't manually write
+agents/doc-updater: 2. **Freshness Timestamps** — Always include last updated date
+agents/doc-updater: 3. **Token Efficiency** — Keep codemaps under 500 lines each
+agents/doc-updater: 4. **Actionable** — Include setup commands that actually work
+agents/doc-updater: 5. **Cross-reference** — Link related documentation
+agents/doc-updater: - [ ] Links tested
+agents/doc-updater: ## When to Update
+agents/doc-updater: **ALWAYS:** New major features, API route changes, dependencies added/removed, architecture changes, setup process modified.
+agents/doc-updater: **OPTIONAL:** Minor bug fixes, cosmetic changes, internal refactoring.
+agents/doc-updater: ---
+agents/doc-updater: **Remember**: Documentation that doesn't match reality is worse than no documentation. Always generate from the source of truth.
+agents/security-reviewer: You are an expert security specialist focused on identifying and remediating vulnerabilities in web applications. Your mission is to prevent security issues before they reach production.
+agents/security-reviewer: 1. **Vulnerability Detection** — Identify OWASP Top 10 and common security issues
+agents/security-reviewer: 2. **Secrets Detection** — Find hardcoded API keys, passwords, tokens
+agents/security-reviewer: 3. **Input Validation** — Ensure all user inputs are properly sanitized
+agents/security-reviewer: 4. **Authentication/Authorization** — Verify proper access controls
+agents/security-reviewer: 5. **Dependency Security** — Check for vulnerable npm packages
+agents/security-reviewer: 6. **Security Best Practices** — Enforce secure coding patterns
+agents/security-reviewer: ## Analysis Commands
+agents/security-reviewer: ## Review Workflow
+agents/security-reviewer: ### 1. Initial Scan
+agents/security-reviewer: - Run `npm audit`, `eslint-plugin-security`, search for hardcoded secrets
+agents/security-reviewer: - Review high-risk areas: auth, API endpoints, DB queries, file uploads, payments, webhooks
+agents/security-reviewer: ### 2. OWASP Top 10 Check
+agents/security-reviewer: 1. **Injection** — Queries parameterized? User input sanitized? ORMs used safely?
+agents/security-reviewer: 2. **Broken Auth** — Passwords hashed (bcrypt/argon2)? JWT validated? Sessions secure?
+agents/security-reviewer: 3. **Sensitive Data** — HTTPS enforced? Secrets in env vars? PII encrypted? Logs sanitized?
+agents/security-reviewer: 4. **XXE** — XML parsers configured securely? External entities disabled?
+agents/security-reviewer: 5. **Broken Access** — Auth checked on every route? CORS properly configured?
+agents/security-reviewer: 6. **Misconfiguration** — Default creds changed? Debug mode off in prod? Security headers set?
+agents/security-reviewer: 7. **XSS** — Output escaped? CSP set? Framework auto-escaping?
+agents/security-reviewer: 8. **Insecure Deserialization** — User input deserialized safely?
+agents/security-reviewer: 9. **Known Vulnerabilities** — Dependencies up to date? npm audit clean?
+agents/security-reviewer: 10. **Insufficient Logging** — Security events logged? Alerts configured?
+agents/security-reviewer: ### 3. Code Pattern Review
+agents/security-reviewer: **Remember**: Security is not optional. One vulnerability can cost users real financial losses. Be thorough, be paranoid, be proactive.

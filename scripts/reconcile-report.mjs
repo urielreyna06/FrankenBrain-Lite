@@ -43,8 +43,12 @@ function canonicalPath(root, category, name) {
   return category === "skills" ? path.join(root, "skills", name, "SKILL.md") : path.join(root, category, `${name}.md`)
 }
 
-export function buildReport({ root, home }) {
-  const accepted = readList(root, "reconcile-accepted.txt")
+// An accepted entry is either a bare line (any item) or "<category>/<name>: <line>" (that item only).
+function isAccepted(accepted, category, name, line) {
+  return accepted.has(line) || accepted.has(`${category}/${name}: ${line}`)
+}
+
+export function buildReport({ root, home, accepted = readList(root, "reconcile-accepted.txt") }) {
   const retired = readList(root, "retired.txt")
   const rows = []
   for (const [category, sources] of Object.entries(SOURCES)) {
@@ -57,7 +61,7 @@ export function buildReport({ root, home }) {
           continue
         }
         const have = new Set(bodyLines(canonical))
-        const lines = [...new Set(bodyLines(file))].filter((l) => !have.has(l) && !accepted.has(l))
+        const lines = [...new Set(bodyLines(file))].filter((l) => !have.has(l) && !isAccepted(accepted, category, name, l))
         rows.push({ category, harness, name, status: lines.length ? "merge" : "ok", missing: lines.length, lines })
       }
     }

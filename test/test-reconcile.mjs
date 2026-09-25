@@ -16,6 +16,10 @@ try {
   fs.writeFileSync(path.join(agentsDir, "zz-live-only.md"), "---\ndescription: x\n---\nonly here\n")
 
   const rows = buildReport({ root, home })
+  const scoped = buildReport({ root, home, accepted: new Set(["agents/architect: UNIQUE-LIVE-LINE-123"]) })
+  assert.equal(scoped.find((r) => r.name === "architect").status, "ok")
+  const otherScope = buildReport({ root, home, accepted: new Set(["agents/code-reviewer: UNIQUE-LIVE-LINE-123"]) })
+  assert.equal(otherScope.find((r) => r.name === "architect").status, "merge")
   const architect = rows.find((r) => r.category === "agents" && r.name === "architect")
   assert.equal(architect.status, "merge")
   assert.deepEqual(architect.lines, ["UNIQUE-LIVE-LINE-123"])
