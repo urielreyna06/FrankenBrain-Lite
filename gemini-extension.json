@@ -1,6 +1,6 @@
 {
   "name": "frankenbrain-lite",
-  "description": "Packaged multi-harness AI work environment: ECC skills, agents, commands, rules.",
-  "version": "0.1.0",
+  "description": "Portable multi-harness engineering workflow with skills, agents, rules, and opt-in shared memory.",
+  "version": "0.2.0",
   "contextFileName": "GEMINI.md"
 }

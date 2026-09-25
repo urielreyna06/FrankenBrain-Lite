@@ -2,6 +2,10 @@
 
 Packaged multi-harness AI work environment loaded as a plugin.
 
+@./rules/common/superpowers-workflow.md
+@./rules/common/persistent-memory.md
+@./skills/using-dev/SKILL.md
+
 ## Structure
 - `skills/` — shared workflow skills (each `<name>/SKILL.md`)
 - `agents/` — agent definitions

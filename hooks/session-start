@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+workflow_content="$(<"${PLUGIN_ROOT}/rules/common/superpowers-workflow.md")"
+memory_content="$(<"${PLUGIN_ROOT}/rules/common/persistent-memory.md")"
+
+vault_root="${FRANKENBRAIN_VAULT_ROOT:-}"
+if [[ -n "$vault_root" ]]; then
+  vault_root="$(cd "$vault_root" 2>/dev/null && pwd -P || printf '%s' "$vault_root")"
+fi
+
+contract_path=""
+handoff_index_path=""
+if [[ -n "$vault_root" ]]; then
+  contract_path="$vault_root/AGENTS.md"
+  handoff_index_path="$vault_root/memory/handoffs/CURRENT.md"
+fi
+
+if [[ -n "$vault_root" && -f "$contract_path" && -f "$handoff_index_path" ]]; then
+  memory_status="Shared memory is available at ${vault_root}. Read the public contract at ${contract_path} and the handoff index at ${handoff_index_path} when relevant. Do not inject or log note or memory bodies automatically."
+else
+  memory_status="Shared memory unavailable: FRANKENBRAIN_VAULT_ROOT is unset or its contract/index is missing. Continue without inventing context or another store."
+fi
+
+session_context="<frankenbrain-lite-bootstrap>
+${workflow_content}
+
+${memory_content}
+
+${memory_status}
+</frankenbrain-lite-bootstrap>"
+
+escape_for_json() {
+  local value="$1"
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  value="${value//$'\n'/\\n}"
+  value="${value//$'\r'/\\r}"
+  value="${value//$'\t'/\\t}"
+  value="${value//$'\b'/\\b}"
+  value="${value//$'\f'/\\f}"
+  printf '%s' "$value"
+}
+
+escaped_context="$(escape_for_json "$session_context")"
+
+if [[ -n "${CLAUDE_PLUGIN_ROOT:-}" && -z "${COPILOT_CLI:-}" ]]; then
+  printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$escaped_context"
+else
+  printf '{\n  "additionalContext": "%s"\n}\n' "$escaped_context"
+fi

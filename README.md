@@ -5,7 +5,7 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0b0f1a?style=flat-square&color=6d5dff" alt="MIT"></a>
   <a href="https://github.com/urielreyna06/FrankenBrain-Lite/actions"><img src="https://img.shields.io/github/actions/workflow/status/urielreyna06/FrankenBrain-Lite/validate.yml?branch=master&style=flat-square" alt="CI"></a>
-  <img src="https://img.shields.io/badge/skills-31-0b0f1a?style=flat-square&color=22d3ee" alt="31 skills">
+  <img src="https://img.shields.io/badge/skills-36-0b0f1a?style=flat-square&color=22d3ee" alt="36 skills">
   <img src="https://img.shields.io/badge/agents-26-0b0f1a?style=flat-square&color=a78bfa" alt="26 agents">
   <img src="https://img.shields.io/badge/security-hard%20gate-0b0f1a?style=flat-square&color=ef4444" alt="Security gate">
   <img src="https://img.shields.io/badge/zero%20credentials-true-0b0f1a?style=flat-square&color=22c55e" alt="Zero credentials">
@@ -33,10 +33,10 @@ clone → register → harvest → secure
 
 | Component | Count | Notes |
 |-----------|:-----:|-------|
-| [`skills/`](skills) | 31 | Procedural workflow skills — each `<name>/SKILL.md` |
+| [`skills/`](skills) | 36 | Procedural workflow skills — each `<name>/SKILL.md` |
 | [`agents/`](agents) | 26 | Specialists for review, build repair, security, architecture |
 | [`commands/`](commands) | 24 | Quick triggers: `plan`, `code-review`, `build-fix`, `save-session`… |
-| [`rules/`](rules) | 9 | Always-loaded standards: `common/` + a full `java/` stack |
+| [`rules/`](rules) | 11 | Always-loaded standards: `common/` + a full `java/` stack |
 | [`scripts/`](scripts) | 4 | harvest · security-gate · validate · install-hooks |
 | CI | 1 | `validate.yml` — security + validate + shellcheck on push |
 
@@ -46,7 +46,8 @@ clone → register → harvest → secure
 |--------|--------|
 | Build right | `agent-introspection-debugging` · `error-handling` · `ai-regression-testing` · `architecture-decision-records` · `delivery-gate` · `codebase-onboarding` |
 | Stay honest | `verification-before-completion` · `search-first` · `research-ops` · `token-budget-advisor` |
-| Think first | `blueprint` · `intent-driven-development` |
+| Think first | `brainstorming` · `writing-plans` · `blueprint` · `intent-driven-development` |
+| Build with evidence | `test-driven-development` · `systematic-debugging` |
 | Stay safe | `security-review` · `safety-guard` · `cloud-cli-operations` |
 | Remember | `continuous-learning-v2` · `growth-log` · `knowledge-ops` · `unified-memory` · `recursive-decision-ledger` |
 | Run at scale | `continuous-agent-loop` · `eval-harness` · `cost-aware-llm-pipeline` · `context-budget` · `parallel-execution-optimizer` · `benchmark-optimization-loop` |
@@ -67,10 +68,10 @@ Pick your harness. Details for each are in the collapsible blocks.
 
 | Harness | Install |
 |---------|---------|
-| **OpenCode** | Add `frankenbrain-lite@git+https://github.com/urielreyna06/FrankenBrain-Lite.git` to the `plugin` array in `~/.config/opencode/opencode.jsonc`; restart. |
-| **Claude Code** | Add this repo as a plugin / marketplace source in `~/.claude/settings.json`. |
-| **Gemini / Antigravity** | `gemini-extension.json` declares the plugin; `GEMINI.md` is the context file. |
-| **Codex** | Clone the repo; point `AGENTS.md` and `rules/` from your Codex config. |
+| **OpenCode** | Register the package in the OpenCode plugin array and restart; the executable adapter is verified against OpenCode 1.18.32 V1. |
+| **Claude Code** | Add the repository as a marketplace source, install `frankenbrain-lite`, approve the local SessionStart hook, and restart. |
+| **Gemini / Antigravity** | `gemini-extension.json` selects `GEMINI.md`; only Gemini static validation was possible in this environment. |
+| **Codex** | Add the local plugin through the supported Codex plugin flow, trust its hook, and start a fresh session; `AGENTS.md` remains the workspace fallback. |
 | **Kiro** | Open the repo as a workspace; `.kiro/steering/` loads the brain, `kiro-extension.json` declares the plugin and `KIRO.md` is the context file. |
 
 <details>
@@ -84,29 +85,59 @@ Pick your harness. Details for each are in the collapsible blocks.
 }
 ```
 
-Already cloned? Reference the local path instead: `"./path/to/FrankenBrain-Lite"`.
-Then restart OpenCode.
+Already cloned? Reference the verified local entrypoint instead:
+`"file:///absolute/path/to/FrankenBrain-Lite/.opencode/plugins/frankenbrain.js"`.
+Then restart OpenCode. That adapter registers the bundled
+skills and injects the public workflow once per plugin session. Its executable
+API boundary is **OpenCode 1.18.32 V1**; this repository does not claim V2
+runtime verification.
 </details>
 
 <details>
 <summary>Claude Code</summary>
 
-Add this repo as a plugin source in `~/.claude/settings.json` (plugins /
-marketplace mechanism) pointing at `https://github.com/urielreyna06/FrankenBrain-Lite`.
-It contributes `skills/`, `agents/`, `commands/`, `rules/`.
+Add `https://github.com/urielreyna06/FrankenBrain-Lite` as a marketplace source,
+install `frankenbrain-lite`, review and trust the SessionStart command, then
+restart Claude Code. The hook injects only the public workflow and memory status;
+it never reads vault note bodies.
 </details>
 
 <details>
 <summary>Gemini / Antigravity</summary>
 
-`gemini-extension.json` declares the plugin; `GEMINI.md` is the context file it loads.
+`gemini-extension.json` declares `GEMINI.md` as the context file. **Gemini static
+validation** covers the JSON and context imports because the Gemini CLI was not
+installed in the verification environment; live loading remains environment-specific.
 </details>
 
 <details>
 <summary>Codex</summary>
 
-Clone the repo; reference `AGENTS.md` and `rules/` from your Codex config.
+The root `plugin.json` and `.codex-plugin/plugin.json` expose skills and the
+SessionStart hook. Add the local plugin with the Codex mechanism available in
+your installation, approve the hook, and start a fresh session. For workspace
+mode, `AGENTS.md` contains the same concise router without requiring Markdown
+import expansion.
 </details>
+
+## Persistent memory (optional)
+
+FrankenBrain-Lite bootstraps the workflow but does not bundle the
+`ecc-universal` runtime. Install and configure `ecc-memory-mcp` separately when
+shared recall is required. In WSL, opt in with:
+
+```bash
+export FRANKENBRAIN_VAULT_ROOT="$HOME/vault"
+export ECC_MEMORY_USER_ROOT="$FRANKENBRAIN_VAULT_ROOT/memory"
+export ECC_MEMORY_ALLOW_USER_SCOPE=1
+```
+
+The bootstrap checks `memory/handoffs/CURRENT.md` and exposes only path and
+availability status. Cross-harness continuity uses explicit ECC `user` scope;
+private note bodies are never injected automatically. See
+[`docs/memory-wsl.md`](docs/memory-wsl.md) for the Obsidian symlink, Windows/WSL
+bridge, `FRANKENBRAIN_WSL_DISTRO`, trust boundaries, OpenCode 1.18.32 boundary,
+and Gemini static validation limitation.
 
 <details>
 <summary>Kiro</summary>
@@ -166,7 +197,8 @@ Enforcement is mechanical:
 make harvest        # refresh harvested ECC artifacts (dry-run; --apply to write)
 make validate       # parse config + check SKILL.md frontmatter
 make security       # scan for credentials (exit non-zero on any hit)
-make check          # validate + security
+make test           # run adapter, hook, workflow, and security regressions
+make check          # security + validate + tests
 make install-hooks  # install the pre-commit gate
 ```
 

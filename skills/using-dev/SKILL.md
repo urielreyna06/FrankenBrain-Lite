@@ -12,6 +12,16 @@ You have the local ECC dev-environment baseline, in addition to superpowers. Two
 
 Process skills set the approach (brainstorming before building, systematic-debugging before fixing); ECC specialists carry it out. Neither replaces the other.
 
+FrankenBrain-Lite bundles the five mandatory workflow skills at the top-level
+`skills/` root: `brainstorming`, `writing-plans`, `test-driven-development`,
+`systematic-debugging`, and `verification-before-completion`. Their always-on
+routing contract is defined in `rules/common/superpowers-workflow.md`.
+
+Cross-session context follows `rules/common/persistent-memory.md`. Use the shared
+ECC `user` store only when `FRANKENBRAIN_VAULT_ROOT` is configured; otherwise
+report shared memory as unavailable and continue without inventing context or a
+replacement store.
+
 ## The rule
 
 Before responding to any non-trivial task, silently triage it against the pools below and **invoke** the match. The human will not type `/graphify`, `/plan`, `/learn`, or “use skill X” — you do that. Skipping because they did not name the tool is a failure of this skill.

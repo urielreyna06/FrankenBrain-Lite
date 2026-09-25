@@ -44,6 +44,50 @@ PY
   done < <(find . -type f \( -name '*.json' -o -name '*.jsonc' -o -name '*.yaml' -o -name '*.yml' -o -name '*.toml' \) -not -path './.git/*' -print0)
 fi
 
+# Plugin entrypoints must remain inside the repository and resolve to real paths.
+if command -v python3 >/dev/null 2>&1; then
+  python3 - <<'PY' || fail "plugin manifest paths"
+import json
+import pathlib
+import sys
+
+root = pathlib.Path.cwd().resolve()
+
+def load(relative_path):
+    return json.loads((root / relative_path).read_text(encoding="utf-8"))
+
+def validate_reference(label, reference):
+    if not isinstance(reference, str) or not reference:
+        raise ValueError(f"{label}: reference must be a non-empty string")
+    candidate = pathlib.PurePosixPath(reference)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        raise ValueError(f"{label}: path traversal is forbidden: {reference}")
+    resolved = (root / candidate).resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as error:
+        raise ValueError(f"{label}: reference escapes repository: {reference}") from error
+    if not resolved.exists():
+        raise ValueError(f"{label}: reference does not exist: {reference}")
+
+try:
+    package = load("package.json")
+    validate_reference("package.json main", package["main"])
+
+    codex = load(".codex-plugin/plugin.json")
+    validate_reference("Codex skills", codex["skills"])
+    validate_reference("Codex hooks", codex["hooks"])
+
+    portable = load("plugin.json")
+    validate_reference("portable skills", portable["skills"])
+    for extension_name, reference in portable.get("extensions", {}).items():
+        validate_reference(f"portable extension {extension_name}", reference)
+except (KeyError, OSError, ValueError, json.JSONDecodeError) as error:
+    print(f"VALIDATE ERROR: {error}", file=sys.stderr)
+    raise SystemExit(1)
+PY
+fi
+
 # SKILL.md frontmatter: each must parse as YAML after --- delimiters
 if command -v python3 >/dev/null 2>&1; then
   while IFS= read -r -d '' f; do
