@@ -34,6 +34,7 @@ try {
   put(".config/opencode/opencode.jsonc", JSON.stringify({ plugin: ["superpowers@git+https://github.com/obra/superpowers.git"] }, null, 2))
   put(".config/opencode/skills/search-first/SKILL.md", "old")
   put(".config/opencode/skills/README.md", "not a skill")
+  put(".config/opencode/skills/using-dev/SKILL.md", "old router")
   put(".config/opencode/agent/java-reviewer.md", "old")
   put(".config/opencode/command/plan.md", "old")
   put(".agents/skills/unified-memory/SKILL.md", "old")
@@ -56,6 +57,7 @@ try {
   assert.ok(oc.plugin[1].startsWith("file://") && oc.plugin[1].endsWith("/.opencode/plugins/frankenbrain.js"))
   assert.ok(!exists(".config/opencode/agent/java-reviewer.md") && !exists(".config/opencode/command/plan.md"))
   assert.ok(!exists(".agents/skills/unified-memory"))
+  assert.ok(!exists(".config/opencode/skills/using-dev"), "retired skills leave OpenCode too")
   assert.equal(fs.readdirSync(path.join(home, ".codex/agents")).length, 27)
   assert.equal(fs.readlinkSync(path.join(home, ".local/bin/fbl")), path.join(root, "bin/fbl"))
 

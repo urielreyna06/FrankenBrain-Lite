@@ -2,7 +2,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import { pathToFileURL } from "node:url"
-import { loadAgents } from "../../lib/agents.mjs"
+import { loadAgents, readNameList } from "../../lib/agents.mjs"
 import { loadCommands } from "../../lib/commands.mjs"
 import { editWithBackup, moveToDisabled } from "./common.mjs"
 
@@ -25,7 +25,10 @@ export function installOpenCode(ctx) {
   const configFile = ["opencode.jsonc", "opencode.json"].map((f) => path.join(base, f)).find((f) => fs.existsSync(f))
   if (!configFile) throw new Error(`OpenCode config not found under ${base}`)
   editWithBackup(ctx, configFile, addPlugin(pluginUrl(ctx.root)))
-  const skills = fs.readdirSync(path.join(ctx.root, "skills"), { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name)
+  const skills = [
+    ...fs.readdirSync(path.join(ctx.root, "skills"), { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name),
+    ...readNameList(ctx.root, "retired.txt"),
+  ]
   for (const name of skills) {
     moveToDisabled(ctx, path.join(base, "skills", name), base, path.join("skills", name))
     moveToDisabled(ctx, path.join(agentsBase, "skills", name), agentsBase, path.join("skills", name))
