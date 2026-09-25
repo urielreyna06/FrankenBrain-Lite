@@ -1,93 +1,75 @@
 ---
-description: Export instincts for sharing
+description: Export instincts from project/global scope to a file
 agent: build
 ---
 
 # Instinct Export Command
 
-Export instincts for sharing with others: $ARGUMENTS
+Arguments: $ARGUMENTS
 
-## Your Task
+Exports instincts to a shareable format. Perfect for:
+- Sharing with teammates
+- Transferring to a new machine
+- Contributing to project conventions
 
-Export instincts from the continuous-learning-v2 system.
+## Implementation
 
-## Export Options
+Run the instinct CLI through the `fbl` helper (same command in every harness):
 
-### Export All
-```
-/instinct-export
-```
-
-### Export High Confidence Only
-```
-/instinct-export --min-confidence 0.8
+```bash
+fbl instinct export $ARGUMENTS
 ```
 
-### Export by Category
-```
-/instinct-export --category coding
-```
-
-### Export to Specific Path
-```
-/instinct-export --output ./my-instincts.json
-```
-
-## Export Format
-
-```json
-{
-  "instincts": [
-    {
-      "id": "instinct-123",
-      "trigger": "[situation description]",
-      "action": "[recommended action]",
-      "confidence": 0.85,
-      "category": "coding",
-      "applications": 10,
-      "successes": 9,
-      "source": "session-observation"
-    }
-  ],
-  "metadata": {
-    "version": "1.0",
-    "exported": "2025-01-15T10:00:00Z",
-    "author": "username",
-    "total": 25,
-    "filter": "confidence >= 0.8"
-  }
-}
-```
-
-## Export Report
+## Usage
 
 ```
-Export Summary
-==============
-Output: ./instincts-export.json
-Total instincts: X
-Filtered: Y
-Exported: Z
-
-Categories:
-- coding: N
-- testing: N
-- security: N
-- git: N
-
-Top Instincts (by confidence):
-1. [trigger] (0.XX)
-2. [trigger] (0.XX)
-3. [trigger] (0.XX)
+/instinct-export                           # Export all personal instincts
+/instinct-export --domain testing          # Export only testing instincts
+/instinct-export --min-confidence 0.7      # Only export high-confidence instincts
+/instinct-export --output team-instincts.yaml
+/instinct-export --scope project --output project-instincts.yaml
 ```
 
-## Sharing
+## What to Do
 
-After export:
-- Share JSON file directly
-- Upload to team repository
-- Publish to instinct registry
+1. Detect current project context
+2. Load instincts by selected scope:
+   - `project`: current project only
+   - `global`: global only
+   - `all`: project + global merged (default)
+3. Apply filters (`--domain`, `--min-confidence`)
+4. Write YAML-style export to file (or stdout if no output path provided)
+
+## Output Format
+
+Creates a YAML file:
+
+```yaml
+# Instincts Export
+# Generated: 2025-01-22
+# Source: personal
+# Count: 12 instincts
 
 ---
+id: prefer-functional-style
+trigger: "when writing new functions"
+confidence: 0.8
+domain: code-style
+source: session-observation
+scope: project
+project_id: a1b2c3d4e5f6
+project_name: my-app
+---
 
-**TIP**: Export high-confidence instincts (>0.8) for better quality shares.
+# Prefer Functional Style
+
+## Action
+Use functional patterns over classes.
+```
+
+## Flags
+
+- `--domain <name>`: Export only specified domain
+- `--min-confidence <n>`: Minimum confidence threshold
+- `--output <file>`: Output file path (prints to stdout when omitted)
+- `--scope <project|global|all>`: Export scope (default: `all`)

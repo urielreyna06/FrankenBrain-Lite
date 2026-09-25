@@ -1,23 +1,34 @@
 ---
-description: List registered projects and instinct counts
+description: List known projects and their instinct statistics
 agent: build
 ---
 
 # Projects Command
 
-Show continuous-learning-v2 project registry and stats: $ARGUMENTS
+List project registry entries and per-project instinct/observation counts for continuous-learning-v2.
 
-## Your Task
+## Implementation
 
-Run:
-
-```bash
-python3 "~/.config/opencode/skills/continuous-learning-v2/scripts/skills/continuous-learning-v2/scripts/instinct-cli.py" projects
-```
-
-If `~/.config/opencode/skills/continuous-learning-v2/scripts` is unavailable, use:
+Run the instinct CLI through the `fbl` helper (same command in every harness):
 
 ```bash
-python3 ~/.config/opencode/skills/continuous-learning-v2/scripts/instinct-cli.py projects
+fbl instinct projects $ARGUMENTS
 ```
 
+`<homunculus>` below is the store `fbl instinct` resolves (default `~/.local/share/ecc-homunculus/`).
+
+## Usage
+
+```bash
+/projects
+```
+
+## What to Do
+
+1. Read `<homunculus>/projects.json`
+2. For each project, display:
+   - Project name, id, root, remote
+   - Personal and inherited instinct counts
+   - Observation event count
+   - Last seen timestamp
+3. Also display global instinct totals

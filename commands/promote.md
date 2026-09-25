@@ -1,23 +1,36 @@
 ---
-description: Promote project instincts to global scope
+description: Promote project-scoped instincts to global scope
 agent: build
 ---
 
 # Promote Command
 
-Promote instincts in continuous-learning-v2: $ARGUMENTS
+Promote instincts from project scope to global scope in continuous-learning-v2.
 
-## Your Task
+## Implementation
 
-Run:
-
-```bash
-python3 "~/.config/opencode/skills/continuous-learning-v2/scripts/skills/continuous-learning-v2/scripts/instinct-cli.py" promote $ARGUMENTS
-```
-
-If `~/.config/opencode/skills/continuous-learning-v2/scripts` is unavailable, use:
+Run the instinct CLI through the `fbl` helper (same command in every harness):
 
 ```bash
-python3 ~/.config/opencode/skills/continuous-learning-v2/scripts/instinct-cli.py promote $ARGUMENTS
+fbl instinct promote $ARGUMENTS
 ```
 
+`<homunculus>` below is the store `fbl instinct` resolves (default `~/.local/share/ecc-homunculus/`).
+
+## Usage
+
+```bash
+/promote                      # Auto-detect promotion candidates
+/promote --dry-run            # Preview auto-promotion candidates
+/promote --force              # Promote all qualified candidates without prompt
+/promote grep-before-edit     # Promote one specific instinct from current project
+```
+
+## What to Do
+
+1. Detect current project
+2. If `instinct-id` is provided, promote only that instinct (if present in current project)
+3. Otherwise, find cross-project candidates that:
+   - Appear in at least 2 projects
+   - Meet confidence threshold
+4. Write promoted instincts to `<homunculus>/instincts/personal/` with `scope: global`

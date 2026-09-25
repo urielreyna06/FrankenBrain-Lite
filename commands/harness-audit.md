@@ -16,10 +16,18 @@ Run a deterministic repository harness audit and return a prioritized scorecard.
 
 ## Deterministic Engine
 
-Always run:
+Always resolve the audit engine to the installed ECC package first (it exists
+outside the cwd), then fall back to the ECC repo, then to a relative path:
 
 ```bash
-node scripts/harness-audit.js <scope> --format <text|json> [--root <path>]
+AUDIT_JS=""
+for c in "$HOME/.local/node_modules/ecc-universal/scripts/harness-audit.js" \
+         "$HOME/projects/ECC/scripts/harness-audit.js" \
+         "scripts/harness-audit.js"; do
+  if [ -n "$c" ] && [ -f "$c" ]; then AUDIT_JS="$c"; break; fi
+done
+[ -n "$AUDIT_JS" ] || { echo "harness-audit.js no encontrado"; exit 1; }
+node "$AUDIT_JS" <scope> --format <text|json> [--root <path>]
 ```
 
 This script is the source of truth for scoring and checks. Do not invent additional dimensions or ad-hoc points.
