@@ -16,9 +16,16 @@ FRANKENBRAIN_VAULT_ROOT= \
 bash "$ROOT/hooks/session-start" >"$missing_output"
 
 python3 -m json.tool "$missing_output" >/dev/null || fail "missing-vault output is not JSON"
-for expected in brainstorming writing-plans test-driven-development systematic-debugging verification-before-completion; do
+for expected in brainstorming writing-plans test-driven-development systematic-debugging requesting-code-review verification-before-completion handoffs-index learn-eval; do
   grep -q "$expected" "$missing_output" || fail "missing workflow name: $expected"
 done
+grep -q '"hookSpecificOutput"' "$missing_output" || fail "missing hookSpecificOutput"
+
+codex_output="$TMP_ROOT/codex.json"
+env -u CLAUDE_PLUGIN_ROOT PLUGIN_ROOT="$TMP_ROOT/codex-plugin" CLV2_HOMUNCULUS_DIR="$TMP_ROOT/homunculus" \
+  FRANKENBRAIN_VAULT_ROOT= bash "$ROOT/hooks/session-start" >"$codex_output"
+python3 -m json.tool "$codex_output" >/dev/null || fail "codex output is not JSON"
+grep -q 'Harness: codex' "$codex_output" || fail "codex harness not detected"
 grep -qi "shared memory unavailable" "$missing_output" || fail "missing unavailable-memory status"
 
 vault_root="$TMP_ROOT/vault"

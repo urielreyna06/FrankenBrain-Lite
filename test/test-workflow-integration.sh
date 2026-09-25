@@ -41,7 +41,10 @@ for skill in "${CORE_SKILLS[@]}"; do
 done
 
 required_files=(
-  rules/common/superpowers-workflow.md
+  rules/common/frankenbrain-workflow.md
+  lib/bootstrap.mjs
+  hooks/session-start.mjs
+  harness/facts.json
   rules/common/persistent-memory.md
   .opencode/plugins/frankenbrain.js
   .claude-plugin/plugin.json
@@ -58,7 +61,7 @@ for file in "${required_files[@]}"; do
 done
 
 for skill in "${CORE_SKILLS[@]}"; do
-  assert_contains rules/common/superpowers-workflow.md "$skill"
+  assert_contains rules/common/frankenbrain-workflow.md "$skill"
 done
 
 assert_contains rules/common/persistent-memory.md FRANKENBRAIN_VAULT_ROOT
@@ -67,9 +70,9 @@ assert_contains rules/common/persistent-memory.md memory/handoffs/CURRENT.md
 
 assert_contains AGENTS.md brainstorming
 assert_contains AGENTS.md verification-before-completion
-assert_contains CLAUDE.md '@rules/common/superpowers-workflow.md'
+assert_contains CLAUDE.md '@rules/common/frankenbrain-workflow.md'
 assert_contains CLAUDE.md '@rules/common/persistent-memory.md'
-assert_contains GEMINI.md '@./rules/common/superpowers-workflow.md'
+assert_contains GEMINI.md '@./rules/common/frankenbrain-workflow.md'
 assert_contains GEMINI.md '@./rules/common/persistent-memory.md'
 
 python3 - <<'PY' || fail "gemini-extension.json contextFileName must equal GEMINI.md"

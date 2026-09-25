@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url"
 
 // Executable compatibility target: OpenCode 1.18.32 V1 plugin API.
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
-const workflowRulePath = path.join(packageRoot, "rules/common/superpowers-workflow.md")
+const workflowRulePath = path.join(packageRoot, "rules/common/frankenbrain-workflow.md")
 const memoryRulePath = path.join(packageRoot, "rules/common/persistent-memory.md")
 const publicWorkflowRule = fs.readFileSync(workflowRulePath, "utf8").trim()
 const publicMemoryRule = fs.readFileSync(memoryRulePath, "utf8").trim()

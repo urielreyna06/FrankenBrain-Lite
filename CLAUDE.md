@@ -2,7 +2,7 @@
 
 Packaged multi-harness AI work environment as a cloneable plugin.
 
-@rules/common/superpowers-workflow.md
+@rules/common/frankenbrain-workflow.md
 @rules/common/persistent-memory.md
 
 ## Structure

@@ -15,7 +15,7 @@ Process skills set the approach (brainstorming before building, systematic-debug
 FrankenBrain-Lite bundles the five mandatory workflow skills at the top-level
 `skills/` root: `brainstorming`, `writing-plans`, `test-driven-development`,
 `systematic-debugging`, and `verification-before-completion`. Their always-on
-routing contract is defined in `rules/common/superpowers-workflow.md`.
+routing contract is defined in `rules/common/frankenbrain-workflow.md`.
 
 Cross-session context follows `rules/common/persistent-memory.md`. Use the shared
 ECC `user` store only when `FRANKENBRAIN_VAULT_ROOT` is configured; otherwise

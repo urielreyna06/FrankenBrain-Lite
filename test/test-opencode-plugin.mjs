@@ -66,7 +66,7 @@ await plugin["experimental.chat.messages.transform"]({}, output)
 await plugin["experimental.chat.messages.transform"]({}, output)
 
 const injected = output.messages[0].parts.filter(
-  (part) => part.type === "text" && part.text.includes("Mandatory Superpowers workflow"),
+  (part) => part.type === "text" && part.text.includes("FrankenBrain workflow"),
 )
 assert.equal(injected.length, 1)
 assert.equal(output.messages[0].parts.at(-1).text, "hello")
