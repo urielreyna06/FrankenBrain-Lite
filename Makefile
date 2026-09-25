@@ -17,6 +17,7 @@ test:
 	bash test/test-plugin-loaders.sh
 	node test/test-frontmatter.mjs
 	node test/test-reconcile.mjs
+	node test/test-agents.mjs
 
 harvest:
 	bash scripts/harvest.sh --apply
