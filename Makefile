@@ -1,4 +1,4 @@
-.PHONY: validate security test harvest help check
+.PHONY: validate security test harvest help check install update uninstall verify-install
 
 help:
 	@grep -E '^[a-zA-Z_-]+:' Makefile | sed 's/:/  /'
@@ -22,8 +22,21 @@ test:
 	node test/test-bootstrap.mjs
 	bash test/test-skill-neutrality.sh
 	bash test/test-observer-backend.sh
+	node test/test-install.mjs
 
 harvest:
 	bash scripts/harvest.sh --apply
 
 check: security validate test
+
+install:
+	node scripts/fbl-install.mjs install --harness $(or $(HARNESS),all)
+
+update:
+	node scripts/fbl-install.mjs update --harness $(or $(HARNESS),all)
+
+uninstall:
+	node scripts/fbl-install.mjs uninstall --harness $(or $(HARNESS),all)
+
+verify-install:
+	node scripts/fbl-install.mjs verify --harness $(or $(HARNESS),all)
