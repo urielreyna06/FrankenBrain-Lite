@@ -21,6 +21,7 @@ test:
 	node test/test-instincts.mjs
 	node test/test-bootstrap.mjs
 	bash test/test-skill-neutrality.sh
+	bash test/test-observer-backend.sh
 
 harvest:
 	bash scripts/harvest.sh --apply

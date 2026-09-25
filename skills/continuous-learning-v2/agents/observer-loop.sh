@@ -212,8 +212,9 @@ analyze_observations() {
     return
   fi
 
-  if ! command -v claude >/dev/null 2>&1; then
-    echo "[$(date)] claude CLI not found, skipping analysis" >> "$LOG_FILE"
+  analyzer_backend="${ECC_OBSERVER_BACKEND:-claude}"
+  if ! command -v "$analyzer_backend" >/dev/null 2>&1; then
+    echo "[$(date)] ${analyzer_backend} CLI not found, skipping analysis" >> "$LOG_FILE"
     return
   fi
 
@@ -396,9 +397,10 @@ PROMPT
   # Bash, including macOS's Bash 3.2 and Git Bash. That lets timeout/signal
   # cleanup terminate tool subprocesses as well as the direct CLI process.
   set -m
-  ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal claude --model "${ECC_OBSERVER_MODEL:-haiku}" --max-turns "$max_turns" --print \
-    --allowedTools "Read,Write" \
-    -p "$prompt_content" < /dev/null >&8 2>> "$LOG_FILE" &
+  analyzer_cmd=()
+  while IFS= read -r analyzer_arg; do analyzer_cmd+=("$analyzer_arg"); done < <(
+    bash "${SCRIPT_DIR}/analyzer-command.sh" "$analyzer_backend" "${ECC_OBSERVER_MODEL:-}" "$max_turns" "$CONFIG_DIR")
+  ECC_SKIP_OBSERVE=1 ECC_HOOK_PROFILE=minimal "${analyzer_cmd[@]}" "$prompt_content" < /dev/null >&8 2>> "$LOG_FILE" &
   CLAUDE_PID=$!
   CLAUDE_PROCESS_GROUP=1
   set +m
