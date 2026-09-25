@@ -95,16 +95,9 @@ assert_contains README.md '| [`skills/`](skills) | 36 |'
 private_path_matches="$({
   linux_home_pattern='/home/'"uriel"
   windows_home_pattern='C:\\Users\\[[:alnum:]_][[:alnum:]_.-]*\\'
-  rg -n --hidden \
-    --glob '!.git/**' \
-    --glob '!.ecc/**' \
-    --glob '!graphify-out/**' \
-    --glob '!docs/audits/**' \
-    --glob '!docs/superpowers/plans/**' \
-    --glob '!docs/superpowers/specs/**' \
-    -e "$linux_home_pattern" \
-    -e "$windows_home_pattern" \
-    . || true
+  git ls-files -z --cached --others --exclude-standard \
+    | grep -z -v -E '^(\.git|\.ecc|graphify-out|docs/audits|docs/superpowers/(plans|specs))/' \
+    | xargs -0 -r grep -n -I -E -e "$linux_home_pattern" -e "$windows_home_pattern" -- || true
 })"
 [[ -z "$private_path_matches" ]] || fail "distributable files contain a personal path: $private_path_matches"
 
