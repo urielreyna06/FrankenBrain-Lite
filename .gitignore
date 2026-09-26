@@ -53,6 +53,9 @@ backup-*/
 dist/
 build/
 
+# Graphify artifacts (regenerables; regeneran tras cada commit vía hook)
+graphify-out/
+
 # Python
 __pycache__/
 *.pyc
