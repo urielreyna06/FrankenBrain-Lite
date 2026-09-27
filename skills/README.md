@@ -1,14 +1,12 @@
-# Harvested ECC assets for OpenCode
+# FrankenBrain-Lite skills
 
-These skills, agents, commands, and the learning plugin were harvested from
-https://github.com/affaan-m/ECC (MIT licensed) to complement the superpowers
-plugin without overlapping its workflow skills.
-
-Source clone: `~/projects/ECC` (shallow, pinned to latest main at harvest time).
+This directory is the single source of skills for every harness. Most skills
+came from https://github.com/affaan-m/ECC (MIT licensed) and complement the
+superpowers plugin without overlapping its workflow skills.
 
 ## Skills
 
-### `~/.config/opencode/skills/`
+### Canonical skills (`skills/` in this repository)
 
 - growth-log, knowledge-ops, skill-scout, rules-distill — remember -> improve loop (superpowers lacks this)
 - search-first — research before coding
@@ -59,8 +57,7 @@ for go, cpp, java, kotlin, php, python, rust.
 
 - Core workflow: plan, tdd, code-review, security, build-fix, e2e,
   refactor-clean, verify, checkpoint, learn, update-docs
-- continuous-learning CLI (paths adapted from Claude plugin roots to
-  `~/.config/opencode/skills/continuous-learning-v2/scripts/instinct-cli.py`):
+- continuous-learning CLI (called through the `fbl instinct` helper):
   instinct-status, instinct-export, instinct-import, promote, projects, evolve
 
 ## Deliberately excluded
@@ -74,13 +71,5 @@ for go, cpp, java, kotlin, php, python, rust.
 
 ## Updating
 
-These are copies, not the repo. To refresh from upstream:
-
-    git -C ~/projects/ECC pull
-    for s in growth-log knowledge-ops skill-scout rules-distill search-first security-review verification-loop intent-driven-development error-handling agent-introspection-debugging context-budget cost-aware-llm-pipeline continuous-learning-v2 unified-memory; do
-      cp -r ~/projects/ECC/skills/$s ~/.config/opencode/skills/
-    done
-
-Re-apply the opencode path adaptations afterwards (grep for `~/.claude` in the
-copied skills/commands, and re-run `bash /tmp/opencode/harvest-agents.sh` for
-agents/commands).
+Edit skills in this repository and run `make update`. Before committing, run
+`bash test/test-skill-neutrality.sh` and `make check`.

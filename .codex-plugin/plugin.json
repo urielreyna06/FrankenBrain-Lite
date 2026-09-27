@@ -1,0 +1,32 @@
+{
+  "name": "frankenbrain-lite",
+  "version": "0.3.0",
+  "description": "Portable multi-harness engineering workflow with opt-in shared-memory bootstrap.",
+  "author": {
+    "name": "Uriel Reyna"
+  },
+  "homepage": "https://github.com/urielreyna06/FrankenBrain-Lite",
+  "repository": "https://github.com/urielreyna06/FrankenBrain-Lite",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "workflow",
+    "tdd",
+    "debugging"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/codex-hooks.json",
+  "interface": {
+    "displayName": "FrankenBrain Lite",
+    "shortDescription": "Portable engineering workflow",
+    "longDescription": "Reusable skills, agents, rules, and session bootstrap for disciplined multi-harness engineering work.",
+    "developerName": "Uriel Reyna",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/urielreyna06/FrankenBrain-Lite"
+  }
+}

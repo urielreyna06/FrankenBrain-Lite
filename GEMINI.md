@@ -2,6 +2,14 @@
 
 Packaged multi-harness AI work environment loaded as a plugin.
 
+@./rules/common/frankenbrain-workflow.md
+@./rules/common/persistent-memory.md
+
+## Install
+
+Run `make install` once (Claude Code, OpenCode, Codex); after editing the repo run `make update`.
+The workflow lives in `rules/common/frankenbrain-workflow.md`.
+
 ## Structure
 - `skills/` — shared workflow skills (each `<name>/SKILL.md`)
 - `agents/` — agent definitions

@@ -1,0 +1,412 @@
+================================================================================
+ETIQUETA: contexto de fallas y carencias del entorno ECC/FrankenBrain-Lite
+PARA: otro LLM/harness con entorno similar — verificar si TU entorno cae en las
+      mismas fallas antes de repetir el trabajo o confiar en lo documentado.
+VERSION: 1.1 (2026-09-26) — v1.0 + seccion G (que se commitea/pushea y por que)
+        + linea "ATAQUE" (como lo estamos atacando) en cada hallazgo.
+ORIGEN: sesiones opencode/Claude del 22-25-sep-2026, auditorias del stack,
+        auditoria FBL self-learning y registros de instintos (failures-corrected).
+REPOSITORIO: FrankenBrain-Lite — github.com/urielreyna06/FrankenBrain-Lite
+        rama feat/superpowers-workflow-memory-bootstrap (commit 890f4e6 v1.0,
+        commit <NUEVO> v1.1). Este archivo ESTA commiteado y pusheado en GitHub.
+================================================================================
+
+COMO USAR ESTE DOCUMENTO
+-----------------------
+1. Para cada hallazgo: lee el sintoma y la causa raiz, y corre el comando de
+   VERIFICA indicado. Si el comando devuelve en tu entorno lo mismo que
+   describia el hallazgo, tu stack probablemente cae en la misma falla.
+2. Cada hallazgo incluye la linea ATAQUE: el plan accion y su estado exacto
+   (HECHO / EN CURSO / BACKLOG / PENDIENTE de OK / DECISION-USUARIO).
+   "HECHO" significa aplicado en el entorno de origen, no garantia en el tuyo.
+3. No tomes ninguna correccion de infraestructura como autorizacion implicita:
+   lee la politica de seguridad (make security) y pide confirmacion para
+   cambios destructivos (kill, purga, desinstalar).
+
+PERFIL DEL ENTORNO DE REFERENCIA (para mapear el tuyo)
+------------------------------------------------------
+- Harnesses: Claude Code (plugin superpowers 6.3.0 + using-dev), OpenCode
+  (plugin superpowers + skills copiadas), Codex (ECC memory via config.toml +
+  superpowers openai-curated + 8/38 skills FBL), Kiro (repo hermano).
+- Memoria compartida: ECC Memory Vault — ~/vault <-> ~/.ecc/memory
+  (runtime ecc-universal; CLI `ecc memory doctor|search|save|read`).
+- Repo de entorno: FrankenBrain-Lite (skills/agents/commands/rules/hooks + tests).
+  Gates: `make security` + `make validate` + `make test` => `make check`.
+- Instalacion del entorno: `make install` (Claude/OpenCode/Codex); `make update`
+  tras editar el repo; `make verify-install`.
+- Vault: contrato en ~/vault/AGENTS.md; handoffs un archivo por hilo en
+  memory/handoffs/ (plural) + indice regenerado por `handoffs-index`.
+
+================================================================================
+SECCION G — QUE SE COMMITEA/PUSHEA Y POR QUE (aclara por que NO se pushea)
+================================================================================
+
+G0. Duda frecuente: "nada de este contenido se commitea/pushea por seguridad"
+---------------------------------------------------------------------------
+Malentendido a corregir: NO es cierto que "por temas de seguridad nada se
+commitea y pushea". Hay DOS reglas distintas que se confunden:
+
+  REGLA 1 — Seguridad estricta (repeticion hasta que duela):
+  ----------------------------------------------------------
+  El repo FrankenBrain-Lite tiene CERO credenciales por diseno (AGENTS.md).
+  NUNCA se commitean: .env, .aws/, .npmrc, .bashrc, .browserstack.env, *.key,
+  *.pem, tokens, secrets de datos. `make security` lo verifica y el CI lo hace
+  cumplir. Esta regla protege el MATERIAL PRIVADO, no el conocimiento.
+
+  REGLA 2 — Versionado del conocimiento (lo que realmente se pushea):
+  ------------------------------------------------------------------
+  TODO el conocimiento de fallas/correcciones SÍ se commitea y pushea en GitHub
+  (rama feat/superpowers-workflow-memory-bootstrap): skills, rules, agents,
+  commands, hooks, tests, docs de auditorias, instintos (failures->correction),
+  decisiones (ADR en ~/vault/decisions) y ESTE archivo (v1.0 = commit 890f4e6,
+  ya visible en GitHub, ver ramas: docs/work-harness-optimization-audit y feat).
+
+Lo que NO se pushea y sus MOTIVOS reales (separando seguridad de otras causas):
+- Credenciales/secretos          -> REGLA 1 (seguridad). NO NUNCA.
+- .ecc/memory/ (memoria live)    -> LOCAL por diseno (no es conocimiento portable;
+       es cache del harness). Puede regenerarse. No es secreto.
+- ~/vault/entero                 -> conocimiento personal-intermedio; se publica
+       como EXTRACTO (notas de auditoria/ADRs en el repo), no el vault completo.
+- ECC (upstream de affaan)       -> repo ajeno; sus cambios requieren su proceso
+       (PR/merge). Nuestro parche local (memory-vault.js) NO se pushea al repo
+       ajeno directamente. No es "seguridad", es gobernanza de upstream.
+- Vault-MCP config con rutas/keys -> por la REGLA 1 si contiene paths/ids.
+
+CONCLUSION para el otro LLM: separa SIEMPRE "no pusheado" en tres bucket:
+  (a) secreto/privado -> nunca se commitea, da igual el harness;
+  (b) local/regenerable -> no se pushea por diseno, no es falla;
+  (c) conocimiento -> SÍ se pushea y versiona (skills, docs, instintos, ADRs).
+Si tu entorno pushea (c) de forma manual y se pierde, esa ES una falla (divergencia).
+
+================================================================================
+SECCION A — PROCESOS E INFRAESTRUCTURA
+================================================================================
+
+A1. Procesos huerfanos que consumen CPU/RAM despues de que muere la terminal
+----------------------------------------------------------------------------
+Sintoma:  un proceso CLI (opencode, BrowserStack SDK) queda vivo sin terminal,
+          acumulando CPU (% muy por encima de lo normal) y RAM.
+Evidencia (24-sep): opencode PID 346238, 18h11m vivo, 9h07m de CPU (50,1% de un
+          core constante), RSS 1 GB, adjunto a pts/7 que ya no existia en `who`;
+          2 SDK de BrowserStack (222932/225310) 24h+, ~110 MB c/u.
+Causa raiz: la TUI/sesion quedo viva al morir la terminal o la sesion de
+          testing no cerro el SDK al terminar.
+ATAQUE (cual es el plan): [HECHO] kill de los procesos (SIGTERM) aislados.
+          [EN CURSO] vigilancia periodica con el mismo ps sortado; pendiente
+          signal handling en scripts de lanzamiento (trap/trap-all EXIT) y
+          audit periodico del modulo (cron mensual de limpieza en A2).
+VERIFICA EN TU ENTORNO:
+          ps -eo pid,etime,pcpu,pmem,rss,pts,cmd | sort -k3 -r | head -15
+          who  # si un PID apunta a una pts ausente -> candidato a huerfano
+          ss -tlnp | grep <pid-sdk>  # sockets abiertos de un SDK ya cerrado
+
+A2. Sin politica de retencion de sesiones -> ~1 GB creciendo sin tope
+----------------------------------------------------------------------
+Sintoma: los directorios de sesiones crecen sin fin:
+          tool-output 345 M + opencode.db 206 M (80 sesiones, 4.5k msgs) +
+          codex/sessions 150 M + claude/projects 206 M ≈ 1 GB.
+Causa raiz: nunca se definio una purga de artefactos antiguos.
+ATAQUE: [HECHO] purga manual >30 dias con backup + cron mensual
+          (`40 5 1 * * ~/.local/bin/purge-old-sessions.sh`); VACUUM de
+          opencode.db (`integrity_check: ok`); backup `*.db.pre-purge-*`.
+          [EN CURSO] convertir la purga en politica verificable (du por scope).
+VERIFICA EN TU ENTORNO:
+          du -sh ~/.opencode ~/.codex/sessions ~/.claude/projects \
+                  ~/.claude/tool-output 2>/dev/null
+          crontab -l | grep -i purge  # debe existir una purga periodica
+
+A3. Contexto estatico por sesion (9-12k tokens) con duplicacion
+----------------------------------------------------------------
+Sintoma: antes de la primera instruccion ya se cargan 9-12k tokens de contexto
+          (reglas ECC 5.7k + AGENTS.md 2.7k + ~70 skills + instintos inyectados).
+Causa raiz: config acumulativa sin auditoria de solapamiento (reglas vs
+          AGENTS.md vs skills vs instincts).
+ATAQUE: [BACKLOG] fusionar las 4 reglas en 1 (~23KB -> ~8KB, -3.7k tok),
+          instintos scope:project no global, threshold de interjeccion
+          del observador 150->400. Tambien contemplado: recortar que skills se
+          inyectan (solo primeras N) — decision de usuario por consumo de tokens.
+VERIFICA EN TU ENTORNO: cuenta lineas/tokens de tus instructions inyectadas:
+          wc -c ~/.config/opencode/*.jsonc ~/.claude/CLAUDE.md \
+                  ~/.claude/rules/ecc/common/*.md 2>/dev/null
+          (si sumas >8-10KB con solapamiento, caes en A3)
+
+A4. Duplicacion de skills entre raices escaneadas (warnings de boot)
+--------------------------------------------------------------------
+Sintoma: warnings al arrancar por skills con el mismo nombre en distintas
+          raices (28 solapadas config<->claude, 5 config<->.agents).
+Causa raiz: copia por harness + multi-scan de opencode.
+ATAQUE: [BACKLOG / experimental, H5 del audit FBL] deduplicar o ignorar;
+          estrategia: ignorar una raiz canonica y usar symlink/union en vez de
+          copia (pendiente validar en opencode a que raiz da prioridad).
+VERIFICA EN TU ENTORNO:
+          opencode debug skill 2>/dev/null | grep -i "duplicate\|dupe" | head
+          find ~/.config/opencode/skills ~/.claude/skills ~/.agents/skills \
+               -maxdepth 1 -type d -printf "%f\n" | sort | uniq -d
+
+================================================================================
+SECCION B — GIT Y VERSIONADO
+================================================================================
+
+B1. Tracking refs locales de origin/* se quedan viejos y dan falso "todo igual"
+-------------------------------------------------------------------------------
+Sintoma: `git branch -avv` dice origin/master = X pero el remoto real ya avanzo.
+Evidencia (24-sep FBL): branch -avv reportaba origin/master=1cfaf44; tras
+          `git fetch origin` el remoto real era 789749f (merge de PR #1),
+          2 commits adelante. Reportar "master sigue igual" sin fetch = falso.
+Causa raiz: origin/* es una cache local de la ultima vez que corriste fetch.
+ATAQUE: [HECHO] rule/instinct `git-fetch-before-trusting-tracking-refs`:
+          SIEMPRE `git fetch origin` (o `git ls-remote origin <branch>`) antes
+          de afirmar "local == remote", y re-medir con
+          `git rev-list --left-right --count <branch>...origin/<branch>`.
+          [EN CURSO] verificar SIEMPRE despues de un push (0 0 = up-to-date).
+VERIFICA EN TU ENTORNO:
+          git fetch origin && git rev-list --left-right --count \
+                  <branch>...origin/<branch>
+
+B2. Reglas `.gitignore` ancladas a la raiz (/x) no aplican dentro de subdirs
+----------------------------------------------------------------------------
+Sintoma: un artefacto dentro de un subdirectorio sigue apareciendo en
+          `git status` pese a existir una regla "para el".
+Evidencia (24-sep FBL): regla `/VAULT-mcp.json.pending` y el artefacto en
+          `skills/VAULT-mcp.json.pending`; `git check-ignore` vacio = NO ignora.
+Causa raiz: el `/` inicial ancla el patron a la raiz del repo; solo matchea
+          `<root>/x`, no `subdir/x`.
+ATAQUE: [HECHO] patrones sin ancla (`x`) o `**/x`; VERIFICAR siempre con
+          `git check-ignore -v <path>` (salida vacia = sigue sin ignorarse).
+          El mismo patron se aplico a `graphify-out/` (artefacto regenerable,
+          16M, nunca versionado — ver G0 bucket (b)).
+VERIFICA EN TU ENTORNO:
+          git check-ignore -v <artefacto> || echo "NO ignorado"
+          grep -n "^/" .gitignore   # revisar reglas que pretendes que apliquen abajo
+
+B3. Carpetas anidadas espurias versionadas (cp -rn copia tambien ocultos)
+--------------------------------------------------------------------------
+Sintoma: directorios `.kiro/` anidados dentro del propio mirror de skills
+          (`skills/.kiro/steering/*`, `.kiro/skills/.kiro/steering/*`) en el repo.
+Causa raiz: `cp -rn skills/./ <destino>` copia tambien los directorios ocultos.
+ATAQUE: [HECHO 2026-09-26] `skills/.kiro/` ya no estaba en la rama feature;
+          se retiraron los dos archivos de `.kiro/skills/.kiro/steering/` y
+          KIRO.md ahora indica abrir la raiz del repo. `scripts/harvest.sh`
+          fue retirado por el instalador reversible; no queda ese mirror script.
+          El test de workflow rechaza el directorio anidado si reaparece.
+VERIFICA EN TU ENTORNO:
+          find skills .kiro/skills -name ".kiro" -type d 2>/dev/null
+          # salida vacia = no hay copia anidada; .kiro/ de la raiz si es valida
+
+================================================================================
+SECCION C — BROWSERSTACK / APPIUM
+================================================================================
+
+C1. SDK (Maven) y CLI binario son ejes de version INDEPENDIENTES
+-----------------------------------------------------------------
+Sintoma: cambias la version del SDK en pom.xml y "nada cambia"; o el driver se
+          comporta distinto sin haber tocado nada.
+Causa raiz: la version efectiva es la combinacion de (a) version declarada en
+          pom, (b) jar resuelto real en ~/.m2, y (c) binario CLI
+          (~/.browserstack/cli/...). El CLI NO sigue al pom automaticamente.
+ATAQUE: [HECHO] instinct `browserstack-sdk-cli-two-version-axes`:
+          verificar las TRES fuentes antes de concluir. [EN CURSO] en cada
+          corrida nueva registrar el trio de versiones en el log del test.
+VERIFICA EN TU ENTORNO:
+          grep -A1 browserstack-java-sdk pom.xml | grep version
+          ls ~/.m2/repository/com/browserstack/browserstack-java-sdk/*/ 2>/dev/null
+          ~/.browserstack/cli/binary-linuxstatic-x64 version 2>/dev/null
+
+C2. Comandos moviles de Appium 2.x compatibles en BrowserStack
+---------------------------------------------------------------
+Sintoma: `UnsupportedCommandException` al usar comandos moviles antiguos.
+Regla: en el Appium 2.x de BrowserStack solo existen comandos como
+          `mobile: swipeGesture` y `mobile: scroll`. Cualquier otro
+          (scrollTo, swipe old-style…) lanza excepcion.
+ATAQUE: [HECHO] usar `mobile: swipeGesture` / `mobile: scroll` con Map.
+          [EN CURSO] banco de comandos permitidos documentado en el repo para no
+          re-introducir los viejos en PRs nuevos.
+VERIFICA EN TU ENTORNO: googlea/investiga `BrowserStack Appium 2 supported
+          mobile commands` antes de escribir scrolls; si tu codigo usa
+          `driver.swipe(` o `AppiumScroll`, probablemente caes en C2.
+
+C3. Diagnostico de cambios de comportamiento en sesiones BrowserStack
+----------------------------------------------------------------------
+Regla (instinct `log-baseline-diff-normalize-then-grep`): al comparar un log
+          "verde" (baseline conocido-bueno) con uno actual que falla, NORMALIZA
+          ambas partes primero (timestamps, UUIDs, secretos userName/accessKey/
+          key/jwt/token/password -> <hidden>, numeros de 8 digitos -> <num>) y
+          luego grepea SOLO las lineas clave (hub url, creating driver, config,
+          binSession). Un diff crudo ahoga la senal.
+ATAQUE: [HECHO] proceso de diagnostico: normalizar-baseline -> diff -> grep de
+          lineas clave. [EN CURSO] convertir en script `normalize-log` reusable.
+VERIFICA EN TU ENTORNO: si tu proceso de diagnostico hace diff de logs sin
+          normalizar, aplica esta regla.
+
+================================================================================
+SECCION D — MEMORIA / APRENDIZAJE (ECC)
+================================================================================
+
+D1. Wiring (CLI/MCP/config) != propagacion; cada harness necesita SU bloque
+--------------------------------------------------------------------------
+Sintoma: declaras un harness "100% funcional / N/N" porque `kiro --add-mcp` o
+          `codex config` o `opencode.jsonc` respondieron OK, pero el harness
+          NO tiene las skills del entorno (cuenta real muy baja).
+Evidencia: harvest.sh propaga por COPIA a los directorios live y solo toca un
+          harness si existe un bloque por destino (SRC_x + cp -rn). Codex con 0
+          bloques = 1/31 skills; tras agregar el bloque SRC_CODEX + make harvest
+          = 31/31. "The CLI says Added, but make harvest never copies".
+ATAQUE: [HECHO] instinct `harness-wiring-not-enough-harvest-block-per-target`
+          + [HECHO en FBL] reemplazo de harvest.sh por instalador reversible
+          `make install/update/verify` (Claude/OpenCode/Codex). Confirmar la
+          cadena end-to-end MIDIENDO el conteo live DESPUES de `make harvest`
+          o `make install`, con numeros (1/31 vs 31/31), no con la promesa.
+VERIFICA EN TU ENTORNO:
+          ls -d <live-skills-dir>/*/ | wc -l   # por cada harness
+          grep -c "SRC_CODEX\|SRC_CLAUDE\|SRC_OPENCODE" scripts/harvest.sh
+
+D2. Observador de aprendizaje "siempre activo" afirmado pero apagado
+---------------------------------------------------------------------
+Sintoma: la documentacion dice "background observer always-on" pero config
+          tiene `observer.enabled:false` y el ultimo observer.log es antiguo.
+Causa raiz: estado de config divergio de la doc.
+ATAQUE: [HECHO] corregir el texto (H2 audit FBL). Encender el observer
+          consume tokens (decisión del usuario: [DECISION-USUARIO] pendiente).
+VERIFICA EN TU ENTORNO: revisa config.json de tu modulo de aprendizaje y el
+          mtime del ultimo observer.log; ¿coinciden doc y config?
+
+D3. Instintos inyectados que saturan el tope de contexto inicial
+-----------------------------------------------------------------
+Sintoma: el contexto inyectado al iniciar sesion se trunca
+          (`[SessionStart truncated context...]`) y se pierde el resumen
+          de la sesion anterior (ECC:SUMMARY).
+Causa raiz: ~30 instintos inyectados llenan el tope por defecto de 8000 chars.
+ATAQUE: [BACKLOG] bajar ECC_MAX_INJECTED_INSTINCTS (~15) o consolidar
+          duplicados con /prune o /evolve. Alternativa en evaluacion: seccion
+          "resumen" corta en el instinto y cuerpo completo en el vault (abrir
+          solo lo que aplique). [DECISION-USUARIO] cual va primero.
+VERIFICA EN TU ENTORNO: mira el inicio de una sesion reanudada; si tu resumen
+          se corta con "truncated context", caes en D3.
+
+D4. MCP de memoria no presente en todos los harnesses
+------------------------------------------------------
+Sintoma: `ecc-memory-vault` (MCP) solo en Codex/Kiro; Claude lo sustituye por
+          archivos + hooks. No es una falla si el flujo por archivos funciona —
+          es una asimetria a conocer, no a "arreglar".
+ATAQUE: [EN CURSO] mantener paridad de CAPACIDAD no de herramienta: si un
+          harness no tiene MCP, documentar su equivalente (archivos+hooks) y
+          probarlo en el test de integracion (test-plugin-loaders).
+VERIFICA EN TU ENTORNO:
+          grep -l "ecc-memory-vault" ~/.claude.json ~/.codex/config.toml \
+                  ~/.config/opencode/*.jsonc 2>/dev/null
+
+D5. Memoria de proyecto con afirmaciones no verificables
+---------------------------------------------------------
+Sintoma: notas de sesion que afirman "Chrome 90+/Safari 14+ confirmado" o
+          "load ~50ms" sin evidencia.
+Causa raiz: overconfidence en lo recuperado.
+ATAQUE: [HECHO] marcar `trust: unreviewed` o recortar; ECC runtime valida
+          links (un link invalido vuelve el documento `invalid` para el doctor).
+          [EN CURSO] check automatico: ecc memory doctor --scope user en el
+          flujo de cierre (debe dar 0 invalid / 0 broken / 0 duplicate).
+VERIFICA EN TU ENTORNO:
+          ecc memory doctor --scope user   # 0 invalid, 0 broken, 0 duplicate
+
+================================================================================
+SECCION E — DEFINICION DE METRICAS Y CONCILIACION (datos/QoS)
+================================================================================
+
+E1. Definiciones de "transaccion"/"compra" distintas entre proyectos
+--------------------------------------------------------------------
+Sintoma: dos dashboards del mismo dominio no suman ("proyectos no sumables");
+          uno cuenta pagos con saldo (BALANCE) y otro no.
+Causa raiz: cada proyecto heredo una definicion; QuickSight excluye BALANCE y
+          usa payment_gateway IN (CLAVE,SIGMA,YAPPY) + remarks='Success'.
+ATAQUE: [HECHO, 25-sep] decision `dec_20260925_ftb_alineada_definicion_qs_sin_balance`:
+          FTB adopta la regla N2 (sin BALANCE) = sumable con Growth Driving y QS.
+          [EN CURSO] re-run FTB el 28-sep con corte 27 bajo regla N2 (prepago).
+          Leccion general: CONCILIAR contra el KPI oficial ANTES de publicar.
+          El coste de no hacerlo: correcciones de magnitud al dia siguiente
+          (v3->v4->v5). El ADR queda versionado en ~/vault/decisions y se
+          publica su EXTRACTO aqui (ver G0 bucket (c)).
+VERIFICA EN TU ENTORNO: antes de publicar metricas, valida contra la fuente
+          oficial (QS/reference) con diferencia 0 mes a mes; si defines
+          "transaccion" con BALANCE y tu KPI oficial no, caes en E1.
+
+E2. Fechas as-of y ventanas en TODAS las fuentes
+--------------------------------------------------
+Sintoma: la misma consulta cambia segun el dia de ejecucion.
+Causa raiz: falta de fecha as-of en alguna fuente o ventanas mezcladas
+          (semanas completas vs meses parciales, promedios diarios vs totales).
+ATAQUE: [HECHO] estandar: fecha as-of en todas las fuentes, semanas
+          lunes-domingo, horizonte Dn solo maduro, periodos de igual largo,
+          rotulos con primer y ultimo dia, comparación por promedio diario al
+          haber mes incompleto. [EN CURSO] checklist de conciliacion antes de
+          publicar (fuente oficial, diferencia 0, as-of en todas las queries).
+VERIFICA EN TU ENTORNO: mira tus queries; ¿todas tienen as-of o el SELECT
+          depende de NOW()/MAX(fecha)?
+
+================================================================================
+SECCION F — HERRAMIENTAS ESPECIFICAS (fallas frecuentes ya corregidas)
+================================================================================
+
+F1. `mvn compile` NO compila src/test: los errores de tests solo aparecen con
+    `mvn -q test-compile`. Verifica los tests antes de lanzar corridas largas
+    (especialmente en background).
+    VERIFICA: mvn -q test-compile 2>&1 | head -20
+
+F2. `ecc memory read <id>` exige formato mem_<minusculas>. links en handoffs
+    solo con ids validos (verificar con `ecc memory read <id> --scope user`).
+
+F3. AWS: prefija `export AWS_PROFILE=UrielReyna` (+ `--region us-east-1`) en
+    comandos autenticados; entrecomilla simple los nombres de log stream con
+    `[$LATEST]` (la shell expande `$LATEST` vacio si van sin comillas); para
+    AWS Athena usa loops `until` para esperar resultados y extrae con el campo
+    VarCharValue del Data array.
+    VERIFICA: si tus comandos AWS fallan con ResourceNotFound en streams con
+    $LATEST, esta es la causa.
+
+F4. PDFs sin capa de texto: si pypdf/pdftotext devuelve ~0 chars en un PDF con
+    varias paginas, confirma que cada pagina es imagen revisando
+    page["/Resources"]["/XObject"] (entradas /Image*). No asumas que
+    pdfinfo/pdftotext existen.
+
+F5. Compose/testTagsAsResourceId: con esa opcion activa Compose puede exponer
+    el MISMO resource-id para una etiqueta -> los finders por id pueden
+    encontrar mas de un elemento. Prefiere text/descripcion cuando aplique.
+
+F6. File-edit deny rules: pattern `Write(<path>)` NO es matcheado por el
+    chequeo de permisos de archivo — solo `Edit(path)` cubre todas las
+    herramientas de edicion (Edit, Write, MultiEdit, NotebookEdit). Manten
+    sincronizadas ~/.claude/settings.json (deny) y opencode permission.edit;
+    las semantica difiere por harness.
+
+F7. CloudFormation: `AWS::SSM::Parameter` con Type: SecureString NO es valido
+    en el template (CFN solo acepta String/StringList; cfn-lint E3030). Crear
+    el parametro fuera con `aws ssm put-parameter --type SecureString` y
+    referenciarlo por NOMBRE (nunca el valor) en la stack.
+
+================================================================================
+CHECKLIST RAPIDO PARA TU ENTORNO
+================================================================================
+[ ] ¿Entiendes que hay 2 reglas (privado vs conocimiento) y NO pusheas (a) y SI (c)?
+        -> G0
+[ ] ¿Procesos huerfanos?  -> A1: ps -eo pid,etime,pcpu,pmem,cmd | sort -k3 -r
+[ ] ¿Sesiones sin tope?   -> A2: du -sh ~/.opencode ~/.codex/sessions ...
+[ ] ¿Contexto 9-12k con duplicacion?  -> A3
+[ ] ¿Skills duplicadas?   -> A4: find ... | sort | uniq -d
+[ ] ¿Reportas estado de remoto sin fetch?  -> B1 (git fetch primero)
+[ ] ¿Gitignore anclado que no ignora subdirs?  -> B2 (git check-ignore -v)
+[ ] ¿Artefactos regenerables commiteados?  -> B2 + G0 bucket (b) (graphify-out/)
+[ ] ¿Copias/verificas 3 versiones BrowserStack?  -> C1
+[ ] ¿Usas comandos Appium viejos?  -> C2 (mobile: swipeGesture / scroll)
+[ ] ¿Diagnosticas logs sin normalizar?  -> C3
+[ ] ¿Harness "funcional" sin bloque en harvest?  -> D1 (mide el conteo live)
+[ ] ¿Doc dice observer on pero config off?  -> D2
+[ ] ¿Resumen de sesion truncado?  -> D3 (baja ECC_MAX_INJECTED_INSTINCTS)
+[ ] ¿Memorias sin evidencia?  -> D5 (ecc memory doctor)
+[ ] ¿Publicaste metricas sin conciliar con el KPI oficial?  -> E1
+[ ] ¿Queries sin as-of?  -> E2
+[ ] ¿Tests compilados con mvn test-compile?  -> F1
+[ ] ¿AWS profile/region/logs $LATEST?  -> F3
+[ ] ¿PDFs sin OCR?  -> F4
+
+FIN DEL DOCUMENTO. Fuentes primarias: ~/vault/notes/2026-09-24-auditoria-performance-stack-agentic.md,
+~/vault/instincts/ (reglas de falla->correccion), docs/audits/2026-09-25-fbl-self-learning-audit.md,
+~/vault/decisions/2026-09-25-ftb-alineada-definicion-qs-sin-balance.md.
+================================================================================

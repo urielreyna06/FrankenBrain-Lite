@@ -2,6 +2,9 @@
 
 Packaged multi-harness AI work environment as a cloneable plugin.
 
+@rules/common/frankenbrain-workflow.md
+@rules/common/persistent-memory.md
+
 ## Structure
 - `skills/` — shared workflow skills (each `<name>/SKILL.md`)
 - `agents/` — agent definitions

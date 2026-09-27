@@ -13,6 +13,7 @@ SKIP_FILES=(
   "CLAUDE.md"
   "README.md"  # security contract documentation
   "GEMINI.md"  # security contract documentation
+  "KIRO.md"  # security contract documentation
   "skills/cloud-cli-operations/SKILL.md"  # documentation only
   "commands/aws.md"  # documentation only
 )
@@ -20,6 +21,7 @@ SKIP_FILES=(
 SKIP_DIRS=(
   ".superpowers/"
   "docs/"
+  ".kiro/skills/"  # pure mirror of skills/, already scanned there
 )
 
 is_skipped() {

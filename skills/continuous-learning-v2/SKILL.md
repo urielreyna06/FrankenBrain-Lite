@@ -146,7 +146,7 @@ Continuous-learning-v2 stores observer data outside `~/.claude` so Claude Code's
 Existing users with data at `~/.claude/homunculus` can migrate once:
 
 ```bash
-bash ~/.config/opencode/skills/continuous-learning-v2/scripts/migrate-homunculus.sh
+fbl migrate-homunculus
 ```
 
 ## Quick Start
@@ -170,28 +170,7 @@ and `observe.sh` is already registered there.
 
 If you previously copied `observe.sh` into `~/.claude/settings.json`, remove that duplicate `PreToolUse` / `PostToolUse` block. Duplicating the plugin hook causes double execution and `${CLAUDE_PLUGIN_ROOT}` resolution errors because that variable is only available inside plugin-managed `hooks/hooks.json` entries.
 
-**Claude Code only — manual install** to `~/.claude/skills`, add this to your `~/.claude/settings.json`:
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [{
-      "matcher": "*",
-      "hooks": [{
-        "type": "command",
-        "command": "~/.claude/skills/continuous-learning-v2/hooks/observe.sh"
-      }]
-    }],
-    "PostToolUse": [{
-      "matcher": "*",
-      "hooks": [{
-        "type": "command",
-        "command": "~/.claude/skills/continuous-learning-v2/hooks/observe.sh"
-      }]
-    }]
-  }
-}
-```
+FrankenBrain-Lite registers the observation hooks through its plugin (Claude and Codex) and the ecc-learning plugin (OpenCode); no manual settings.json edit is needed.
 
 ### 2. Initialize Directory Structure
 
@@ -219,13 +198,13 @@ mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/ecc-homunculus"/{instincts/{perso
 `scripts/` directory instead of the Claude slash commands:
 
 ```bash
-CLI=~/.config/opencode/skills/continuous-learning-v2/scripts/instinct-cli.py
-python3 "$CLI" status
-python3 "$CLI" evolve --generate --limit 3
-python3 "$CLI" export --scope all --output /tmp/instincts.yaml
-python3 "$CLI" import /tmp/instincts.yaml
-python3 "$CLI" promote --dry-run
-python3 "$CLI" projects
+CLI="fbl instinct"
+$CLI status
+$CLI evolve --generate --limit 3
+$CLI export --scope all --output /tmp/instincts.yaml
+$CLI import /tmp/instincts.yaml
+$CLI promote --dry-run
+$CLI projects
 ```
 
 Instinct YAML files live in `~/.local/share/ecc-homunculus/instincts/personal/`
@@ -282,7 +261,10 @@ Other behavior (observation capture, instinct thresholds, project scoping, promo
 
 The Claude Code background observer requires WSL2, Linux, or macOS, and does
 not run on OpenCode (instinct analysis is model-driven there, as described
-above).
+above). On native Windows (Git Bash / MSYS2) it starts and reports success,
+but the process is killed when the spawning hook exits and its Job Object
+closes, so no analysis ever runs — setting `observer.enabled: true` there is
+effectively a no-op (see ECC issue #2489).
 
 ## File Structure
 
@@ -384,7 +366,7 @@ Hooks fire **100% of the time**, deterministically. This means:
 
 v2.1 is fully compatible with v2.0 and v1:
 - Existing global instincts can be migrated from `~/.claude/homunculus/instincts/` with `scripts/migrate-homunculus.sh`
-- Existing `~/.claude/skills/learned/` skills from v1 still work
+- Existing learned skills from v1 still work
 - Stop hook still runs (but now also feeds into v2)
 - Gradual migration: run both in parallel
 

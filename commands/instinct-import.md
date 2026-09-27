@@ -1,88 +1,109 @@
 ---
-description: Import instincts from external sources
+description: Import instincts from file or URL into project/global scope
 agent: build
 ---
 
 # Instinct Import Command
 
-Import instincts from a file or URL: $ARGUMENTS
+## Implementation
 
-## Your Task
+Run the instinct CLI through the `fbl` helper (same command in every harness):
 
-Import instincts into the continuous-learning-v2 system.
-
-## Import Sources
-
-### File Import
-```
-/instinct-import path/to/instincts.json
+```bash
+fbl instinct import $ARGUMENTS
 ```
 
-### URL Import
+`<homunculus>` below is the store `fbl instinct` resolves (default `~/.local/share/ecc-homunculus/`).
+
+Import instincts from local file paths or HTTP(S) URLs.
+
+## Usage
+
 ```
-/instinct-import https://example.com/instincts.json
+/instinct-import team-instincts.yaml
+/instinct-import https://github.com/org/repo/instincts.yaml
+/instinct-import team-instincts.yaml --dry-run
+/instinct-import team-instincts.yaml --scope global --force
 ```
 
-### Team Share Import
-```
-/instinct-import @teammate/instincts
-```
+## What to Do
 
-## Import Format
-
-Expected JSON structure:
-
-```json
-{
-  "instincts": [
-    {
-      "trigger": "[situation description]",
-      "action": "[recommended action]",
-      "confidence": 0.7,
-      "category": "coding",
-      "source": "imported"
-    }
-  ],
-  "metadata": {
-    "version": "1.0",
-    "exported": "2025-01-15T10:00:00Z",
-    "author": "username"
-  }
-}
-```
+1. Fetch the instinct file (local path or URL)
+2. Parse and validate the format
+3. Check for duplicates with existing instincts
+4. Merge or add new instincts
+5. Save to inherited instincts directory:
+   - Project scope: `<homunculus>/projects/<project-id>/instincts/inherited/`
+   - Global scope: `<homunculus>/instincts/inherited/`
 
 ## Import Process
 
-1. **Validate format** - Check JSON structure
-2. **Deduplicate** - Skip existing instincts
-3. **Adjust confidence** - Reduce confidence for imports (×0.8)
-4. **Merge** - Add to local instinct store
-5. **Report** - Show import summary
-
-## Import Report
-
 ```
-Import Summary
-==============
-Source: [path or URL]
-Total in file: X
-Imported: Y
-Skipped (duplicates): Z
-Errors: W
+ Importing instincts from: team-instincts.yaml
+================================================
 
-Imported Instincts:
-- [trigger] (confidence: 0.XX)
-- [trigger] (confidence: 0.XX)
-...
+Found 12 instincts to import.
+
+Analyzing conflicts...
+
+## New Instincts (8)
+These will be added:
+  ✓ use-zod-validation (confidence: 0.7)
+  ✓ prefer-named-exports (confidence: 0.65)
+  ✓ test-async-functions (confidence: 0.8)
+  ...
+
+## Duplicate Instincts (3)
+Already have similar instincts:
+  WARNING: prefer-functional-style
+     Local: 0.8 confidence, 12 observations
+     Import: 0.7 confidence
+     → Keep local (higher confidence)
+
+  WARNING: test-first-workflow
+     Local: 0.75 confidence
+     Import: 0.9 confidence
+     → Update to import (higher confidence)
+
+Import 8 new, update 1?
 ```
 
-## Conflict Resolution
+## Merge Behavior
 
-When importing duplicates:
-- Keep higher confidence version
-- Merge application counts
-- Update timestamp
+When importing an instinct with an existing ID:
+- Higher-confidence import becomes an update candidate
+- Equal/lower-confidence import is skipped
+- User confirms unless `--force` is used
 
----
+## Source Tracking
 
-**TIP**: Review imported instincts with `/instinct-status` after import.
+Imported instincts are marked with:
+```yaml
+source: inherited
+scope: project
+imported_from: "team-instincts.yaml"
+project_id: "a1b2c3d4e5f6"
+project_name: "my-project"
+```
+
+## Flags
+
+- `--dry-run`: Preview without importing
+- `--force`: Skip confirmation prompt
+- `--min-confidence <n>`: Only import instincts above threshold
+- `--scope <project|global>`: Select target scope (default: `project`)
+
+## Output
+
+After import:
+```
+PASS: Import complete!
+
+Added: 8 instincts
+Updated: 1 instinct
+Skipped: 3 instincts (equal/higher confidence already exists)
+
+New instincts saved to: <homunculus>/instincts/inherited/
+
+Run /instinct-status to see all instincts.
+```

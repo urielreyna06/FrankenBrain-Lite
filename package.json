@@ -1,7 +1,8 @@
 {
   "name": "frankenbrain-lite",
-  "version": "0.1.0",
-  "description": "Packaged multi-harness AI work environment: harvested ECC skills, agents, commands and rules. Cloneable superpowers-style plugin.",
+  "version": "0.3.0",
+  "description": "Packaged multi-harness AI work environment: single-source ECC skills, agents, commands and rules. Cloneable superpowers-style plugin.",
+  "main": ".opencode/plugins/frankenbrain.js",
   "type": "module",
   "keywords": [
     "pi-package",

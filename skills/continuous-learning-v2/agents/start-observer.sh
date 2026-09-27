@@ -92,12 +92,18 @@ obs = cfg.get('observer', {})
 print(obs.get('run_interval_minutes', 5))
 print(obs.get('min_observations_to_analyze', 20))
 print(str(obs.get('enabled', False)).lower())
+print((obs.get('models') or {}).get(os.environ.get('ECC_OBSERVER_BACKEND', 'claude'), ''))
 " 2>/dev/null || echo "5
 20
-false")
+false
+")
     _interval=$(echo "$_config" | sed -n '1p')
     _min_obs=$(echo "$_config" | sed -n '2p')
     _enabled=$(echo "$_config" | sed -n '3p')
+    _model=$(echo "$_config" | sed -n '4p')
+    if [ -z "${ECC_OBSERVER_MODEL:-}" ] && [ -n "$_model" ] && [ "$_model" != "session" ]; then
+      ECC_OBSERVER_MODEL="$_model"
+    fi
     if [ "$_interval" -gt 0 ] 2>/dev/null; then
       OBSERVER_INTERVAL_MINUTES="$_interval"
     fi
@@ -202,6 +208,8 @@ case "$ACTION" in
 
     nohup env \
       CONFIG_DIR="$CONFIG_DIR" \
+      ECC_OBSERVER_BACKEND="${ECC_OBSERVER_BACKEND:-claude}" \
+      ECC_OBSERVER_MODEL="${ECC_OBSERVER_MODEL:-}" \
       PID_FILE="$PID_FILE" \
       LOG_FILE="$LOG_FILE" \
       OBSERVATIONS_FILE="$OBSERVATIONS_FILE" \

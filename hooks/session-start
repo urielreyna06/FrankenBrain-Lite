@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Launcher kept for hooks/run-hook.cmd compatibility; the logic lives in session-start.mjs.
+set -euo pipefail
+exec node "$(cd "$(dirname "$0")" && pwd)/session-start.mjs"

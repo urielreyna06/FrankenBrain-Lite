@@ -1,0 +1,14 @@
+{
+  "description": "FrankenBrain-Lite Codex hooks: bootstrap and observation capture.",
+  "hooks": {
+    "SessionStart": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "bash \"$PLUGIN_ROOT/hooks/session-start\"" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "ECC_HARNESS=codex ECC_OBSERVER_BACKEND=codex bash \"$PLUGIN_ROOT/skills/continuous-learning-v2/hooks/observe.sh\" pre" } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "ECC_HARNESS=codex ECC_OBSERVER_BACKEND=codex bash \"$PLUGIN_ROOT/skills/continuous-learning-v2/hooks/observe.sh\" post" } ] }
+    ]
+  }
+}

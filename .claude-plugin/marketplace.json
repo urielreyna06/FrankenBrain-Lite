@@ -1,0 +1,37 @@
+{
+  "name": "frankenbrain-lite",
+  "owner": {
+    "name": "Uriel Reyna"
+  },
+  "metadata": {
+    "description": "FrankenBrain-Lite portable workflow plugin"
+  },
+  "plugins": [
+    {
+      "name": "frankenbrain-lite",
+      "source": "./",
+      "description": "Portable Superpowers workflow, engineering skills, rules, and opt-in shared memory bootstrap.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Uriel Reyna"
+      },
+      "homepage": "https://github.com/urielreyna06/FrankenBrain-Lite",
+      "repository": "https://github.com/urielreyna06/FrankenBrain-Lite",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "workflow",
+        "tdd",
+        "debugging",
+        "multi-harness"
+      ],
+      "category": "workflow",
+      "tags": [
+        "skills",
+        "workflow",
+        "tdd"
+      ],
+      "strict": true
+    }
+  ]
+}

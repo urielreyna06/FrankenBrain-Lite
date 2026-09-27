@@ -1,0 +1,9 @@
+{
+  "name": "frankenbrain-lite",
+  "version": "0.3.0",
+  "description": "Portable multi-harness engineering workflow with opt-in shared-memory bootstrap.",
+  "skills": "./skills/",
+  "extensions": {
+    "com.openai.hooks": "./hooks/hooks.json"
+  }
+}

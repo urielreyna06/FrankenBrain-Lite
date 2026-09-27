@@ -1,0 +1,13 @@
+# Agents installed for Claude Code (pruning decision 2026-08-25, kept by user decision 2026-09-25)
+agent-evaluator
+architect
+code-reviewer
+doc-updater
+docs-lookup
+harness-optimizer
+java-build-resolver
+java-reviewer
+loop-operator
+pr-test-analyzer
+security-reviewer
+silent-failure-hunter

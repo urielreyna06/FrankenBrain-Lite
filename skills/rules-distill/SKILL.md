@@ -26,13 +26,13 @@ The rules distillation process follows three phases:
 #### 1a. Collect skill inventory
 
 ```bash
-bash ~/.config/opencode/skills/rules-distill/scripts/scan-skills.sh
+fbl rules-scan skills
 ```
 
 #### 1b. Collect rules index
 
 ```bash
-bash ~/.config/opencode/skills/rules-distill/scripts/scan-rules.sh
+fbl rules-scan rules
 ```
 
 #### 1c. Present to user
