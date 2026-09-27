@@ -37,8 +37,8 @@ clone → make install → work → learn → make update
 | [`agents/`](agents) | 27 | Specialists for review, build repair, security, architecture |
 | [`commands/`](commands) | 26 | Quick triggers: `plan`, `code-review`, `build-fix`, `save-session`… |
 | [`rules/`](rules) | 11 | Always-loaded standards: `common/` + a full `java/` stack |
-| [`scripts/`](scripts) | 5 | fbl-install · security-gate · validate · reconcile-report · install-hooks |
-| CI | 1 | `validate.yml` — security + validate + shellcheck on push |
+| [`scripts/`](scripts) | 6 | fbl-install · lite-health · security-gate · validate · reconcile-report · install-hooks |
+| CI | 1 | `validate.yml` — security + validate + Lite healthcheck + shellcheck on push |
 
 **Skills, by family**
 
@@ -165,6 +165,7 @@ by editing `.kiro/settings/mcp.json` (workspace) or `~/.kiro/settings/mcp.json`
 | Hunting a bug | `systematic-debugging` |
 | Reviewing new code | `code-review`, then your language's reviewer |
 | A failing build | the `build-error-resolver` for your stack |
+| Checking a cloned Lite package | `make health` (read-only diagnosis and recovery steps) |
 | Shipping to prod | `security-review` · `verification-before-completion` |
 | Ending / resuming a session | `save-session` / `resume-session` |
 | Auditing your agent config | `harness-audit` · `config-gc` · `context-budget` |
@@ -199,6 +200,7 @@ make install        # install into Claude, OpenCode and Codex (HARNESS=… for o
 make update         # propagate repo edits to every harness
 make verify-install # check the installation
 make uninstall      # restore the pre-install state
+make health         # inspect this Lite checkout and print recovery steps
 make validate       # parse config + check SKILL.md frontmatter
 make security       # scan for credentials (exit non-zero on any hit)
 make test           # run adapter, hook, workflow, and security regressions
@@ -207,6 +209,12 @@ make install-hooks  # install the pre-commit gate
 ```
 
 The pre-commit gate runs on every commit; CI enforces the same checks on push.
+
+`make health` is a separate, read-only check of the Lite package layout. It
+reports missing assets and invalid package identity, and suggests recovery
+without changing files. Use `node scripts/lite-health.mjs --json` for a machine-
+readable report. The source and scope of this adapted use case are documented in
+[`docs/lite-healthchecks.md`](docs/lite-healthchecks.md).
 
 ## License
 

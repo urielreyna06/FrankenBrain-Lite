@@ -184,12 +184,14 @@ B3. Carpetas anidadas espurias versionadas (cp -rn copia tambien ocultos)
 Sintoma: directorios `.kiro/` anidados dentro del propio mirror de skills
           (`skills/.kiro/steering/*`, `.kiro/skills/.kiro/steering/*`) en el repo.
 Causa raiz: `cp -rn skills/./ <destino>` copia tambien los directorios ocultos.
-ATAQUE: [PENDIENTE de ejecutar con OK] borrar ambas y excluir ocultos en el
-          mirror script (--exclude ".*"). Riesgo: si se corre sin confirmacion
-          se pueden perder archivos; por eso pide OK antes de `rm -rf`.
+ATAQUE: [HECHO 2026-09-26] `skills/.kiro/` ya no estaba en la rama feature;
+          se retiraron los dos archivos de `.kiro/skills/.kiro/steering/` y
+          KIRO.md ahora indica abrir la raiz del repo. `scripts/harvest.sh`
+          fue retirado por el instalador reversible; no queda ese mirror script.
+          El test de workflow rechaza el directorio anidado si reaparece.
 VERIFICA EN TU ENTORNO:
-          find <repo> -name ".kiro" -type d 2>/dev/null
-          # revisa tus scripts de sync: ¿excluyen patrones ocultos?
+          find skills .kiro/skills -name ".kiro" -type d 2>/dev/null
+          # salida vacia = no hay copia anidada; .kiro/ de la raiz si es valida
 
 ================================================================================
 SECCION C — BROWSERSTACK / APPIUM

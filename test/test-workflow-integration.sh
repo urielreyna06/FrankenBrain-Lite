@@ -39,6 +39,7 @@ for skill in "${CORE_SKILLS[@]}"; do
   [[ ! -e "skills/$skill" ]] || fail "retired skill present: $skill"
   assert_not_exists ".kiro/skills/$skill"
 done
+assert_not_exists ".kiro/skills/.kiro"
 
 required_files=(
   rules/common/frankenbrain-workflow.md

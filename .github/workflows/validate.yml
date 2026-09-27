@@ -16,6 +16,17 @@ jobs:
       - name: Config parseability
         run: bash scripts/validate.sh
 
+      - name: Set up Node for Lite healthcheck
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+
+      - name: Lite healthcheck tests
+        run: node --test test/lite-health.test.mjs
+
+      - name: Lite healthcheck
+        run: node scripts/lite-health.mjs
+
       - name: Shellcheck
         if: runner.os == 'Linux'
         run: |

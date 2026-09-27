@@ -1,4 +1,4 @@
-.PHONY: validate security test help check install update uninstall verify-install
+.PHONY: validate security test health help check install update uninstall verify-install
 
 help:
 	@grep -E '^[a-zA-Z_-]+:' Makefile | sed 's/:/  /'
@@ -23,6 +23,10 @@ test:
 	bash test/test-skill-neutrality.sh
 	bash test/test-observer-backend.sh
 	node test/test-install.mjs
+	node --test test/lite-health.test.mjs
+
+health:
+	node scripts/lite-health.mjs
 
 check: security validate test
 

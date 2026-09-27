@@ -26,9 +26,8 @@ and `rules/` folders the way OpenCode or Claude Code do. Instead it reads from a
 
 ## Install (Kiro)
 
-1. Open the repository as a workspace folder in Kiro. The active workspace can be
-   the project root **or** the `skills/` folder — a live `.kiro/` is provided in
-   both locations.
+1. Open the repository root as the workspace folder in Kiro. The canonical
+   steering files live only in the root `.kiro/steering/` directory.
 2. Kiro loads `.kiro/steering/*.md` automatically (always-included steering).
 3. Optionally register MCP servers by editing `.kiro/settings/mcp.json` (workspace)
    or `~/.kiro/settings/mcp.json` (user-global).
