@@ -32,7 +32,7 @@ if command -v opencode >/dev/null 2>&1; then
   OPENCODE_DISABLE_MODELS_FETCH=1 \
   OPENCODE_DISABLE_DEFAULT_PLUGINS=1 \
   OPENCODE_DISABLE_PROJECT_CONFIG=1 \
-  timeout "${FBL_OPENCODE_LOADER_TIMEOUT:-300s}" opencode debug skill >"$skills_output" || fail "OpenCode loader timed out or failed"
+  timeout -k 30s "${FBL_OPENCODE_LOADER_TIMEOUT:-300s}" opencode debug skill >"$skills_output" || fail "OpenCode loader timed out or failed"
 
   for skill in growth-log search-first graphify; do
     grep -q "\"$skill\"" "$skills_output" || fail "OpenCode did not load skill: $skill"
@@ -41,7 +41,7 @@ if command -v opencode >/dev/null 2>&1; then
   agents_output="$TMP_ROOT/opencode-agents.txt"
   HOME="$TMP_ROOT/home" XDG_CONFIG_HOME="$TMP_ROOT/config" XDG_DATA_HOME="$TMP_ROOT/data" XDG_CACHE_HOME="$TMP_ROOT/cache" \
   OPENCODE_DISABLE_AUTOUPDATE=1 OPENCODE_DISABLE_MODELS_FETCH=1 OPENCODE_DISABLE_DEFAULT_PLUGINS=1 OPENCODE_DISABLE_PROJECT_CONFIG=1 \
-  timeout "${FBL_OPENCODE_LOADER_TIMEOUT:-300s}" opencode agent list >"$agents_output" || fail "OpenCode agent list failed"
+  timeout -k 30s "${FBL_OPENCODE_LOADER_TIMEOUT:-300s}" opencode agent list >"$agents_output" || fail "OpenCode agent list failed"
   for agent in java-reviewer self-healer code-reviewer; do
     grep -q "^$agent (subagent)" "$agents_output" || fail "OpenCode did not register agent: $agent"
   done
@@ -69,8 +69,8 @@ echo "MANIFEST CONTRACT PASS"
 
 if command -v codex >/dev/null 2>&1; then
   codex_home="$TMP_ROOT/codex-home"; mkdir -p "$codex_home"
-  CODEX_HOME="$codex_home" timeout 120s codex plugin marketplace add "$ROOT" >/dev/null 2>&1 || fail "codex marketplace add failed"
-  CODEX_HOME="$codex_home" timeout 120s codex plugin add frankenbrain-lite@frankenbrain-lite >/dev/null 2>&1 || fail "codex plugin add failed"
+  CODEX_HOME="$codex_home" timeout -k 30s 120s codex plugin marketplace add "$ROOT" >/dev/null 2>&1 || fail "codex marketplace add failed"
+  CODEX_HOME="$codex_home" timeout -k 30s 120s codex plugin add frankenbrain-lite@frankenbrain-lite >/dev/null 2>&1 || fail "codex plugin add failed"
   find "$codex_home/plugins/cache/frankenbrain-lite" -name SKILL.md -path '*growth-log*' | grep -q . || fail "codex cache lacks skills"
   echo "CODEX LOCAL MARKETPLACE INSTALL PASS"
 fi

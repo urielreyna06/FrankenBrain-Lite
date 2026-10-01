@@ -139,4 +139,8 @@ if len(set(versions.values())) != 1:
     raise SystemExit(f"versions differ: {versions}")
 PY2
 
+# Timeouts need a -k KILL grace: a child that ignores TERM would hang make check.
+unguarded_timeouts="$(grep -nE '(^|[ ;(])timeout [^-]' test/*.sh scripts/*.sh 2>/dev/null || true)"
+[[ -z "$unguarded_timeouts" ]] || fail "timeout without -k grace: $unguarded_timeouts"
+
 echo "WORKFLOW INTEGRATION PASS"
