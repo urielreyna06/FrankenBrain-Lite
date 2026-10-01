@@ -2221,17 +2221,17 @@ Expected: ≥ 1. If 0, Codex did not fire `PostToolUse`: switch the capture hook
 
 ### Task 17: Turn on the observer and record the outcome
 
-- [ ] **Step 1: Enable**
+- [x] **Step 1: Enable**
 
 Set `"enabled": true` in `skills/continuous-learning-v2/config.json`; run `make check`; commit `feat(learning): enable observer in all harnesses`; run `make update`.
 
-- [ ] **Step 2: Confirm analyzers start with the right model**
+- [x] **Step 2: Confirm analyzers start with the right model**
 
 After one working session per harness, run:
 `grep -h -E "Analyzing|CLI not found|timed out" ~/.local/share/ecc-homunculus/observer.log ~/.local/share/ecc-homunculus/projects/*/observer.log 2>/dev/null | tail -5; ps -eo args | grep -E "observer-loop|--model haiku|gpt-5.6-luna" | grep -v grep`
 Expected: at least one `Analyzing N observations` line and no `CLI not found`.
 
-- [ ] **Step 3: Check `self-healer` does not fight the plugin**
+- [x] **Step 3: Check `self-healer` does not fight the plugin**
 
 Run: `grep -n "skill-revived" ~/.local/log/healing/healing.jsonl | tail -3`
 Expected: `nothing to repair` after migration (plugin skills are not copies in skill directories).
