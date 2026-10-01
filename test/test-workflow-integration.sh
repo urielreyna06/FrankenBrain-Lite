@@ -143,4 +143,9 @@ PY2
 unguarded_timeouts="$(grep -nE '(^|[ ;(])timeout [^-]' test/*.sh scripts/*.sh 2>/dev/null || true)"
 [[ -z "$unguarded_timeouts" ]] || fail "timeout without -k grace: $unguarded_timeouts"
 
+python3 - <<'PY3' || fail "observer must be enabled in continuous-learning-v2/config.json"
+import json
+assert json.load(open("skills/continuous-learning-v2/config.json"))["observer"]["enabled"] is True
+PY3
+
 echo "WORKFLOW INTEGRATION PASS"
