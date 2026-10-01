@@ -21,6 +21,7 @@ test:
 	node test/test-instincts.mjs
 	node test/test-bootstrap.mjs
 	bash test/test-skill-neutrality.sh
+	bash test/test-kiro-skills-sync.sh
 	bash test/test-observer-backend.sh
 	node test/test-install.mjs
 	node --test test/lite-health.test.mjs

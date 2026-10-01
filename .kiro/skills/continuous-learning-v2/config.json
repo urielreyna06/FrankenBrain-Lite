@@ -1,8 +1,9 @@
 {
   "version": "2.1",
   "observer": {
-    "enabled": false,
+    "enabled": true,
     "run_interval_minutes": 5,
-    "min_observations_to_analyze": 20
+    "min_observations_to_analyze": 20,
+    "models": { "claude": "haiku", "codex": "gpt-5.6-luna", "opencode": "session" }
   }
 }

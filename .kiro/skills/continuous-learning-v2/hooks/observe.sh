@@ -333,7 +333,8 @@ observation = {
     "tool": parsed["tool"],
     "session": parsed["session"],
     "project_id": os.environ.get("PROJECT_ID_ENV", "global"),
-    "project_name": os.environ.get("PROJECT_NAME_ENV", "global")
+    "project_name": os.environ.get("PROJECT_NAME_ENV", "global"),
+    "harness": os.environ.get("ECC_HARNESS", "claude")
 }
 
 # Scrub secrets: match common key=value, key: value, and key"value patterns
