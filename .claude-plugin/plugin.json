@@ -1,6 +1,6 @@
 {
   "name": "frankenbrain-lite",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Portable multi-harness engineering workflow with skills, agents, rules, and opt-in shared-memory bootstrap.",
   "author": {
     "name": "Uriel Reyna"

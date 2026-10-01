@@ -1,6 +1,6 @@
 ---
 name: skill-scout
-description: Search existing local, marketplace, GitHub, and web skill sources before creating a new skill. Use when the user wants to create, build, fork, or find a skill for a workflow.
+description: Use when the user wants to create, build, fork, or find a skill for a workflow, or when you notice a repeated manual process, recurring request, or reusable procedure mid-session — inventories existing skills, commands, agents, hooks, rules and instincts, then decides reuse vs improve vs create with a decision matrix.
 metadata:
   origin: community
 ---
@@ -8,8 +8,8 @@ metadata:
 # Skill Scout
 
 Use this skill before creating a new skill. The goal is to avoid duplicating
-existing community or marketplace work, while still vetting anything external
-before adoption.
+existing capabilities, prefer extending what exists, and vet anything external
+before adoption. Priority order: **reuse > improve > create**.
 
 Source: salvaged from stale community PR #1232 by `redminwang`.
 
@@ -21,6 +21,11 @@ Source: salvaged from stale community PR #1232 by `redminwang`.
 - The user describes a workflow and you are about to suggest creating a new
   skill.
 - The user wants to fork or extend an existing skill.
+- You notice an opportunity mid-session: a process repeated 2+ times, a
+  recurring request, a re-written prompt, a recurring report or validation, or
+  a procedure that could be written down step by step. Record the evidence
+  (what repeated, where, how often) — never propose from assumptions.
+- `learn-eval` or `evolve` produced a skill candidate.
 
 If the user explicitly says to skip search or create from scratch, acknowledge
 that and proceed with the requested creation workflow.
@@ -38,7 +43,18 @@ Extract:
 
 ### Step 2 - Search Local Sources
 
-Search installed and marketplace skill names first. Local sources are preferred
+Inventory every local capability type, not only skills — a command, agent,
+hook, rule or instinct may already cover the need:
+
+```bash
+R="$(fbl root)"
+ls "$R/skills" "$R/commands" "$R/agents" "$R/rules"/*/ 2>/dev/null
+grep -RilE "keyword|synonym" "$R/skills" "$R/commands" "$R/agents" "$R/rules" "$R/hooks" 2>/dev/null
+fbl instinct status 2>/dev/null | grep -iE "keyword|synonym"
+```
+
+Also check the skills and agents listed in the current session context, and
+superpowers skills. Then search skill names specifically. Local sources are preferred
 because they are already part of the user's environment.
 
 ```bash
@@ -94,18 +110,53 @@ Rank candidates by:
 
 Cap the final list at 10 results.
 
-### Step 6 - Present Decision Options
+### Step 6 - Evaluate Reuse
 
-Give the user a short table:
+For the best local match, answer with evidence:
+
+1. Does an existing capability cover the need? **Yes / Partially / No** —
+   estimate coverage (%) and name what is missing.
+2. Can it be extended without breaking compatibility (triggers, callers,
+   tests) or adding disproportionate complexity? **Yes / No**
+3. Does the value justify the change? Weigh frequency, time saved, errors
+   avoided, future reuse against maintenance cost. **Yes / No**
+
+If the answer leads to improving, write a **Gap Analysis**: current
+capabilities, missing capabilities, limitations, minimal changes, dependencies,
+expected impact, and **Risk** (Low / Medium / High).
+
+Create a new skill only when no capability is reusable, extending would add
+too much complexity, the function has its own identity, and the value
+justifies future maintenance.
+
+### Step 7 - Present the Decision
+
+Deliver, per opportunity:
+
+- **Opportunity summary** — tentative name, problem, observed trigger,
+  estimated frequency, estimated impact.
+- **Existing capability assessment** — related capabilities, coverage,
+  reuse and extension possibilities.
+- **Decision Matrix**:
+
+| Criterion | Result |
+| --- | --- |
+| Existing capability | Yes/No |
+| Partial coverage | Yes/No |
+| Can be improved | Yes/No |
+| Value justifies change | Yes/No |
+| Requires new skill | Yes/No |
+
+- **Final recommendation** — exactly one, with technical justification:
 
 | Option | Meaning |
 | --- | --- |
-| Use existing | Invoke or install a matching skill as-is. |
-| Fork or extend | Copy the closest skill and modify it. |
-| Create fresh | Build a new skill after confirming no close match exists. |
+| Reuse existing | Invoke or install a matching capability as-is. |
+| Improve existing | Extend the closest local capability (Gap Analysis above). |
+| Create new | Build a new skill with `writing-skills` after confirming no reusable match. |
 
-Only create a new skill after the user chooses that path or after the search
-finds no close match.
+Only change or create anything after the user chooses that path. Improving a
+local FBL skill follows the normal workflow (test first, then `make check`).
 
 ## Examples
 
@@ -133,11 +184,15 @@ release-note variant, or create a fresh skill.
 - Do not jump directly to new skill creation when a search is reasonable.
 - Do not install external skills without reading them first.
 - Do not present a long unranked list of weak matches.
+- Do not inventory only skills; commands, agents, hooks and instincts count.
+- Do not fork a near-duplicate when a small extension would do.
 - Do not treat web-only mentions as trusted sources.
 - Do not edit installed marketplace originals in place.
 
 ## Related
 
 - `search-first` - General search-before-building workflow.
-- `skill-stocktake` - Audit installed skills for health, duplicates, and gaps.
-- `agent-sort` - Categorize and organize existing agents and skills.
+- `continuous-learning-v2`, `learn-eval`, `evolve` - Detect skill candidates
+  from sessions and instincts; route them here before saving.
+- `config-gc` - Prune redundant or stale skills after the ecosystem grows.
+- `writing-skills` - Author and test a new skill once creation is chosen.

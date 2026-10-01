@@ -118,4 +118,13 @@ assert_contains README.md 'agents-27'
 assert_contains README.md '| [`skills/`](skills) | 32 |'
 if grep -q '^harvest:' Makefile; then fail "Makefile still has a harvest target"; fi
 
+SCOUT=skills/skill-scout/SKILL.md
+for marker in 'Decision Matrix' 'Gap Analysis' 'Reuse existing' 'Improve existing' 'Create new' 'commands' 'agents' 'hooks' 'instincts' 'Risk'; do
+  assert_contains "$SCOUT" "$marker"
+done
+for missing in skill-stocktake agent-sort; do
+  if grep -Fq "$missing" "$SCOUT"; then fail "$SCOUT references nonexistent skill: $missing"; fi
+done
+assert_contains commands/learn-eval.md 'skill-scout'
+
 echo "WORKFLOW INTEGRATION PASS"
