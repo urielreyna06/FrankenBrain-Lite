@@ -1,7 +1,7 @@
 {
   "name": "frankenbrain-lite",
   "description": "Packaged multi-harness AI work environment for Kiro IDE: ECC skills, agents, commands, rules. Loaded via .kiro/ steering and skills.",
-  "version": "0.1.0",
+  "version": "0.3.4",
   "harness": "kiro",
   "contextFileName": "KIRO.md",
   "kiro": {

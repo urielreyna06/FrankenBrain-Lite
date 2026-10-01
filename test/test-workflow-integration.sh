@@ -129,7 +129,7 @@ assert_contains commands/learn-eval.md 'skill-scout'
 
 python3 - <<'PY2' || fail "manifest versions differ"
 import json
-files = ["package.json", "plugin.json", ".claude-plugin/plugin.json", ".codex-plugin/plugin.json"]
+files = ["package.json", "plugin.json", ".claude-plugin/plugin.json", ".codex-plugin/plugin.json", "kiro-extension.json", "gemini-extension.json"]
 versions = {f: json.load(open(f))["version"] for f in files}
 for f in [".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"]:
     for i, p in enumerate(json.load(open(f))["plugins"]):
