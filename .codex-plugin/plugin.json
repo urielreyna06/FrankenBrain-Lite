@@ -1,6 +1,6 @@
 {
   "name": "frankenbrain-lite",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Portable multi-harness engineering workflow with opt-in shared-memory bootstrap.",
   "author": {
     "name": "Uriel Reyna"

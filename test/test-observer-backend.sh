@@ -13,4 +13,17 @@ codex_argv="$(bash "$CMD" codex "" 10 /tmp/h | tr '\n' ' ')"
 if bash "$CMD" nope "" 10 /tmp/h 2>/dev/null; then fail "unknown backend accepted"; fi
 grep -q 'analyzer-command.sh' "$ROOT/skills/continuous-learning-v2/agents/observer-loop.sh" || fail "observer-loop does not use analyzer-command.sh"
 python3 -c "import json,sys; m=json.load(open(sys.argv[1]))['observer']['models']; assert m=={'claude':'haiku','codex':'gpt-5.6-luna','opencode':'session'}, m" "$ROOT/skills/continuous-learning-v2/config.json" || fail "config models"
+CHECK="$ROOT/skills/continuous-learning-v2/agents/completion-check.sh"
+REC='{"status":"analysis_complete"}'
+complete() { printf '%b' "$1" | bash "$CHECK"; }
+complete "done\n$REC\n" || fail "plain record rejected"
+complete "done\n\`\`\`json\n$REC\n\`\`\`\n\n" || fail "fenced record rejected"
+complete "done\n$REC\r\n" || fail "CRLF record rejected"
+if complete "done\n"; then fail "missing record accepted"; fi
+if complete "$REC\nmore text\n"; then fail "record not last accepted"; fi
+if complete "$REC\n$REC\n"; then fail "duplicate record accepted"; fi
+if complete "\`\`\`json\n\`\`\`\n"; then fail "empty fence accepted"; fi
+if complete "$REC\n\`\`\`\n\`\`\`\n"; then fail "double fence accepted"; fi
+grep -q 'completion-check.sh' "$ROOT/skills/continuous-learning-v2/agents/observer-loop.sh" || fail "observer-loop does not use completion-check.sh"
+
 echo "OBSERVER BACKEND TEST PASS"
