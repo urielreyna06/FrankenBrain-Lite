@@ -1,6 +1,6 @@
 ---
 name: skill-scout
-description: Use when the user wants to create, build, fork, or find a skill for a workflow, or when you notice a repeated manual process, recurring request, or reusable procedure mid-session — inventories existing skills, commands, agents, hooks, rules and instincts, then decides reuse vs improve vs create with a decision matrix.
+description: Use when the user wants to create, build, fork, or find a skill for a workflow, or when you notice a repeated manual process, recurring request, or reusable procedure mid-session.
 metadata:
   origin: community
 ---
@@ -25,7 +25,7 @@ Source: salvaged from stale community PR #1232 by `redminwang`.
   recurring request, a re-written prompt, a recurring report or validation, or
   a procedure that could be written down step by step. Record the evidence
   (what repeated, where, how often) — never propose from assumptions.
-- `learn-eval` or `evolve` produced a skill candidate.
+- `/learn-eval` or `/evolve` produced a skill candidate.
 
 If the user explicitly says to skip search or create from scratch, acknowledge
 that and proceed with the requested creation workflow.
@@ -192,7 +192,8 @@ release-note variant, or create a fresh skill.
 ## Related
 
 - `search-first` - General search-before-building workflow.
-- `continuous-learning-v2`, `learn-eval`, `evolve` - Detect skill candidates
-  from sessions and instincts; route them here before saving.
+- `continuous-learning-v2` (skill), `/learn-eval` and `/evolve` (commands) -
+  Detect skill candidates from sessions and instincts; route them here before
+  saving.
 - `config-gc` - Prune redundant or stale skills after the ecosystem grows.
 - `writing-skills` - Author and test a new skill once creation is chosen.
