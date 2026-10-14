@@ -7,13 +7,14 @@
 # script always picks up project-level skills without relying on the caller.
 #
 # Environment:
-#   RULES_DISTILL_GLOBAL_DIR   Override ~/.claude/skills (for testing only;
+#   RULES_DISTILL_GLOBAL_DIR   Override the FrankenBrain-Lite skills dir (for testing only;
 #                              do not set in production — intended for bats tests)
 #   RULES_DISTILL_PROJECT_DIR  Override project dir detection (for testing only)
 
 set -euo pipefail
 
-GLOBAL_DIR="${RULES_DISTILL_GLOBAL_DIR:-$HOME/.config/opencode/skills}"
+# Default: the single-source skills directory this script ships in (<repo>/skills).
+GLOBAL_DIR="${RULES_DISTILL_GLOBAL_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 CWD_SKILLS_DIR="${RULES_DISTILL_PROJECT_DIR:-${1:-$PWD/.opencode/skills}}"
 # Validate CWD_SKILLS_DIR looks like a known skills path (defense-in-depth).
 # Only warn when the path exists — a nonexistent path poses no traversal risk.

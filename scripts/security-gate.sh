@@ -41,7 +41,9 @@ pattern_hits=0
 check() {
   local label="$1" regex="$2"
   local out
-  out="$(grep -rInE -- "$regex" . 2>/dev/null \
+  # Exclude third-party dependency trees: they are git-ignored, not shipped, and
+  # routinely contain the literal word "password" in docs/schemas (false positives).
+  out="$(grep -rInE --exclude-dir=node_modules --exclude-dir=.git -- "$regex" . 2>/dev/null \
     | grep -v '^\./\.git/' \
     || true )"
   while IFS= read -r line; do

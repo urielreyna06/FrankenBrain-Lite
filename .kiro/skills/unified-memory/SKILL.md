@@ -47,6 +47,24 @@ substitute for governed project documentation.
 | `team` | `<repo>/.ecc/memory/team/` | Context intended for human review and version-controlled sharing |
 | `user` | `~/.ecc/memory/` | Operator context that follows the user across repositories |
 
+For cross-harness continuity, prefer `user` scope and request it explicitly.
+Project-specific sensitive context may remain in `project` scope; it will not
+follow the user when another harness resolves a different project root.
+
+When Obsidian presents the same user store, configure portable paths and link
+the vault view to the canonical ECC directory:
+
+```bash
+export FRANKENBRAIN_VAULT_ROOT="$HOME/vault"
+export ECC_MEMORY_USER_ROOT="$FRANKENBRAIN_VAULT_ROOT/memory"
+export ECC_MEMORY_ALLOW_USER_SCOPE=1
+ln -s "$HOME/.ecc/memory" "$FRANKENBRAIN_VAULT_ROOT/memory"
+```
+
+Create the symbolic link only if the destination is absent. The package
+bootstrap may inspect path availability and `memory/handoffs/CURRENT.md`, but it
+must never inject or log Obsidian note bodies automatically.
+
 All participating harnesses must use the same repository working directory or
 the same `ECC_MEMORY_PROJECT_ROOT` and `ECC_MEMORY_USER_ROOT` overrides.
 Normal search recall covers active `project` and `team` memories. A direct ID

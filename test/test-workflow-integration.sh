@@ -118,4 +118,34 @@ assert_contains README.md 'agents-27'
 assert_contains README.md '| [`skills/`](skills) | 32 |'
 if grep -q '^harvest:' Makefile; then fail "Makefile still has a harvest target"; fi
 
+SCOUT=skills/skill-scout/SKILL.md
+for marker in 'Decision Matrix' 'Gap Analysis' 'Reuse existing' 'Improve existing' 'Create new' 'reuse > improve > create' 'fbl instinct status' '"$R/hooks"' '**Risk** (Low / Medium / High)' '### Step 7 - Present the Decision'; do
+  assert_contains "$SCOUT" "$marker"
+done
+for missing in skill-stocktake agent-sort; do
+  if grep -Fq "$missing" "$SCOUT"; then fail "$SCOUT references nonexistent skill: $missing"; fi
+done
+assert_contains commands/learn-eval.md 'skill-scout'
+
+python3 - <<'PY2' || fail "manifest versions differ"
+import json
+files = ["package.json", "plugin.json", ".claude-plugin/plugin.json", ".codex-plugin/plugin.json", "kiro-extension.json", "gemini-extension.json"]
+versions = {f: json.load(open(f))["version"] for f in files}
+for f in [".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"]:
+    for i, p in enumerate(json.load(open(f))["plugins"]):
+        if "version" in p:
+            versions[f"{f}[{i}]"] = p["version"]
+if len(set(versions.values())) != 1:
+    raise SystemExit(f"versions differ: {versions}")
+PY2
+
+# Timeouts need a -k KILL grace: a child that ignores TERM would hang make check.
+unguarded_timeouts="$(grep -nE '(^|[ ;(])timeout [^-]' test/*.sh scripts/*.sh 2>/dev/null || true)"
+[[ -z "$unguarded_timeouts" ]] || fail "timeout without -k grace: $unguarded_timeouts"
+
+python3 - <<'PY3' || fail "observer must be enabled in continuous-learning-v2/config.json"
+import json
+assert json.load(open("skills/continuous-learning-v2/config.json"))["observer"]["enabled"] is True
+PY3
+
 echo "WORKFLOW INTEGRATION PASS"

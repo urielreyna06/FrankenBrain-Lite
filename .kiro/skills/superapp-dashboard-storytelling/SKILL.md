@@ -85,7 +85,7 @@ Each user correction is a failing test for this skill. Before closing the sessio
 1. **Fix the instance** and grep the deliverable for siblings (same label, same window, same number elsewhere).
 2. **Classify** it: validation · legibility · narrative · process. Add it as one row to knowledge-base.md §17 (correction log): symptom → root cause → rule.
 3. **Turn it into a rule** where the next agent will read it: a Quick Reference row or checklist item (form matches the failure: missing element → required slot; wrong shape → recipe; skipped rule → prohibition).
-4. **Sync** the copies (`~/.config/opencode/skills/`, `~/projects/FrankenBrain-Lite/skills/` and `.kiro/skills/`), run `make security && make validate` there; commit only with the user's OK.
+4. **Sync**: edit the skill in the FrankenBrain-Lite repository, run `make security && make validate`, then `make update` (commit only with the user's OK). The separate `.kiro/skills/` copy, if you keep one, is updated by hand.
 5. **Record** the pattern in `~/vault/growth-log/YYYY-MM-DD.md` and the project memory/handoff.
 
 Before delivering, run the **reader test** (knowledge-base.md §16): for every element, a non-author can say what one unit is, the base, the window and the source without asking. Any "no" is a correction you would otherwise get from the user.

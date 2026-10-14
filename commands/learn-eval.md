@@ -87,6 +87,7 @@ directory name and frontmatter `name:` identical.
    - [ ] Grep `$(fbl root)/skills/` and relevant project `.claude/skills/` files by keyword to check for content overlap
    - [ ] Check MEMORY.md (both project and global) for overlap
    - [ ] Consider whether appending to an existing skill would suffice
+   - [ ] For a new skill, run the `skill-scout` reuse evaluation (commands, agents, hooks, instincts too) and keep its Decision Matrix
    - [ ] Confirm this is a reusable pattern, not a one-off fix
 
    ### 5b. Holistic verdict
