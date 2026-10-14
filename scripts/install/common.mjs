@@ -59,9 +59,12 @@ export function linkHelper(ctx) {
   if (!ctx.state.created.includes(link)) ctx.state.created.push(link)
 }
 
+// Generous cap: `codex plugin list` alone exceeds Node's 1 MB default.
+const CLI_MAX_BUFFER = 64 * 1024 * 1024
+
 export function runCli(ctx, command, args) {
   if (ctx.skipCli) return ""
-  return execFileSync(command, args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 180000 })
+  return execFileSync(command, args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 180000, maxBuffer: CLI_MAX_BUFFER })
 }
 
 export function restoreAll(ctx) {
