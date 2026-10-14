@@ -24,6 +24,7 @@ test:
 	bash test/test-kiro-skills-sync.sh
 	bash test/test-observer-backend.sh
 	node test/test-install.mjs
+	node test/test-run-cli.mjs
 	node --test test/lite-health.test.mjs
 
 health:
